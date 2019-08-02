@@ -135,7 +135,7 @@ class Modula_Nextgen_Importer {
                 'title'       => $attachment['title'],
                 'description' => $attachment['caption'],
                 'halign'      => 'center',
-                'valing'      => 'middle',
+                'valign'      => 'middle',
                 'link'        => $attachment['src'],
                 'target'      => '',
                 'width'       => 2,
@@ -167,7 +167,7 @@ class Modula_Nextgen_Importer {
         $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $nextgen_shortcode = '[nggallery id=' . $gallery_id . ']';
+        $nextgen_shortcode = '[ngg_images gallery_ids="' . $gallery_id . '"]';
         $modula_shortcode  = '[modula id="' . $modula_gallery_id . '"]';
 
         // Replace NextGEN shortcode with Modula Shortcode in Posts, Pages and CPTs

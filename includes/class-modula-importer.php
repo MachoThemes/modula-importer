@@ -116,6 +116,7 @@ class Modula_Importer {
 
             wp_register_script('modula-nextgen-importer', MODULA_IMPORTER_URL . 'assets/js/modula-nextgen-importer.js', '', MODULA_IMPORTER_VERSION, true);
             wp_enqueue_script('modula-nextgen-importer');
+            // Strings added to js are used for translation
             wp_localize_script(
                 'modula-nextgen-importer',
                 'modula_importer_settings',
