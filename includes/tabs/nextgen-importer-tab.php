@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 $nextgen           = Modula_Nextgen_Importer::get_instance();
 $nextgen_galleries = $nextgen->get_galleries();
 ?>
@@ -7,10 +11,10 @@ $nextgen_galleries = $nextgen->get_galleries();
 
         <table class="form-table">
             <tbody>
-            <!-- If NextGen gallery plugin is installed and active and there are galleries created -->
             <?php if ('inactive' != $nextgen_galleries && false != $nextgen_galleries) {
                 $import_settings = get_option('modula_importer');
                 ?>
+                <!-- If NextGen gallery plugin is installed and active and there are galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('NextGEN galleries', 'modula-importer'); ?>

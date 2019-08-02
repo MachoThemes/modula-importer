@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 class Modula_Nextgen_Importer {
 
@@ -26,7 +30,7 @@ class Modula_Nextgen_Importer {
     /**
      * Get all NextGEN Galleries
      *
-     * @return mixed false | string | array of NextGEN Galleries
+     * @return mixed
      *
      * @since 1.0.0
      */
@@ -120,7 +124,7 @@ class Modula_Nextgen_Importer {
         }
 
         if (count($attachments) == 0) {
-            $this->modula_import_result(false, __('No images found in gallery. Skipping...', 'modula-importer'));
+            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -179,7 +183,7 @@ class Modula_Nextgen_Importer {
     }
 
     /**
-     * Adds a server side image to the WordPress Media Library
+     * Add image to library
      *
      * @param $source_path
      * @param $source_file
@@ -207,11 +211,11 @@ class Modula_Nextgen_Importer {
         extract($wp_filetype);
 
         if ((!$type || !$ext) && !current_user_can('unfiltered_upload')) {
-            // Invalid file type - skip
             return false;
         }
 
         $result = copy($source_file_path, $destination_file_path);
+
         if (!$result) {
 
             return false;
@@ -247,7 +251,6 @@ class Modula_Nextgen_Importer {
             wp_update_attachment_metadata($attachmentID, wp_generate_attachment_metadata($attachmentID, $destination_file_path));
         }
 
-        // Force alt and caption
         update_post_meta($attachmentID, '_wp_attachment_image_alt', $alt);
         $attachment               = get_post($attachmentID);
         $attachment->post_excerpt = $description;
@@ -266,7 +269,7 @@ class Modula_Nextgen_Importer {
 
 
     /**
-     * Returns a JSON encoded success or error flag with message string
+     * Returns result
      *
      * @param $success
      * @param $message
