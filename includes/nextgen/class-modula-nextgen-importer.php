@@ -110,13 +110,7 @@ class Modula_Nextgen_Importer {
                 $attachment = $this->add_image_to_library($gallery->path, $image->filename, $image->description, $image->alttext);
 
                 if ($attachment !== false) {
-
-                    // Import tags
-                    $tags = wp_get_object_terms($image->pid, 'ngg_tag', 'fields=names');
-
-                    // Add to new attachment
-                    wp_set_object_terms($attachment['ID'], $tags, 'modula-tag');
-
+                    
                     // Add to array of attachments
                     $attachments[] = $attachment;
                 }
