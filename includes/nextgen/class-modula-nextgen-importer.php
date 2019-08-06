@@ -53,7 +53,7 @@ class Modula_Nextgen_Importer {
     }
 
     /**
-     * Imports a gallery from NextGEN gallery into Modula gallery
+     * Imports a gallery from NextGEN into Modula
      *
      * @since 1.0.0
      */

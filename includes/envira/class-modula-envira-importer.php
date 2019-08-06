@@ -53,7 +53,7 @@ class Modula_Envira_Importer {
     }
 
     /**
-     * Imports a gallery from Envira gallery into Modula gallery
+     * Imports a gallery from Envira into Modula
      *
      * @since 1.0.0
      */
