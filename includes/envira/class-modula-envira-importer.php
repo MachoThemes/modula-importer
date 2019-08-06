@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Modula_Nextgen_Importer {
+class Modula_Envira_Importer {
 
     /**
      * Holds the class object.
@@ -23,12 +23,12 @@ class Modula_Nextgen_Importer {
     public function __construct() {
 
         // Add AJAX
-        add_action('wp_ajax_modula_importer_nextgen_gallery_import', array($this, 'nextgen_gallery_import'));
+        add_action('wp_ajax_modula_importer_envira_gallery_import', array($this, 'envira_gallery_import'));
 
     }
 
     /**
-     * Get all NextGEN Galleries
+     * Get all Envira Galleries
      *
      * @return mixed
      *
@@ -38,10 +38,10 @@ class Modula_Nextgen_Importer {
 
         global $wpdb;
 
-        // first check if plugin active
-        if (is_plugin_active('nextgen-gallery/nggallery.php')) {
+        // first check if plugin is active ( pro or lite version )
+        if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
 
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
+            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
             if (count($galleries) == 0) {
                 return false;
             }
@@ -53,11 +53,11 @@ class Modula_Nextgen_Importer {
     }
 
     /**
-     * Imports a gallery from NextGEN gallery into Modula gallery
+     * Imports a gallery from Envira gallery into Modula gallery
      *
      * @since 1.0.0
      */
-    public function nextgen_gallery_import($gallery_id = '') {
+    public function envira_gallery_import($gallery_id = '') {
 
         global $wpdb;
 
@@ -83,22 +83,8 @@ class Modula_Nextgen_Importer {
 
         }
 
-        // Get image path
-        $sql     = $wpdb->prepare("SELECT path, title, galdesc, pageid 
-    						FROM " . $wpdb->prefix . "ngg_gallery
-    						WHERE gid = %d
-    						LIMIT 1",
-            $gallery_id);
-        $gallery = $wpdb->get_row($sql);
-
-        // Get images from NextGEN Gallery
-        $sql = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "ngg_pictures
-    						WHERE galleryid = %d
-    						ORDER BY sortorder ASC,
-    						imagedate ASC",
-            $gallery_id);
-
-        $images = $wpdb->get_results($sql);
+        // Get all images attached to the gallery
+        $images = get_attached_media('image', $gallery_id);
 
         $attachments = array();
 
@@ -106,8 +92,21 @@ class Modula_Nextgen_Importer {
             // Add each image to Media Library
             foreach ($images as $image) {
 
+                // get gallery data so we can get title, description and alt from envira
+                $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
+
+                $path     = get_attached_file($image->ID);
+                $filename = basename($path);
+
+                $envira_image_title = (!isset($envira_gallery_data['gallery'][$image->ID]['title']) || '' != $envira_gallery_data['gallery'][$image->ID]['title']) ? $envira_gallery_data['gallery'][$image->ID]['title'] : '';
+
+                $envira_image_caption = (!isset($envira_gallery_data['gallery'][$image->ID]['caption']) || '' != $envira_gallery_data['gallery'][$image->ID]['caption']) ? $envira_gallery_data['gallery'][$image->ID]['caption'] : wp_get_attachment_caption($image->ID);
+
+                $envira_image_alt = (!isset($envira_gallery_data['gallery'][$image->ID]['alt']) || '' != $envira_gallery_data['gallery'][$image->ID]['alt']) ? $envira_gallery_data['gallery'][$image->ID]['alt'] : get_post_meta($image->ID, '_wp_attachment_image_alt', TRUE);
+
+
                 // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($gallery->path, $image->filename, $image->description, $image->alttext);
+                $attachment = $this->add_image_to_library($path, $filename,$envira_image_title, $envira_image_caption, $envira_image_alt);
 
                 if ($attachment !== false) {
 
@@ -146,7 +145,7 @@ class Modula_Nextgen_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => $gallery->title,
+            'post_title'  => get_the_title($gallery_id),
         ));
 
         // Attach meta modula-settings to Modula CPT
@@ -165,12 +164,12 @@ class Modula_Nextgen_Importer {
         $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $nextgen_shortcode = '[ngg_images gallery_ids="' . $gallery_id . '"]';
+        $envira_shortcodes = '[envira-gallery id="' . $gallery_id . '"]';
         $modula_shortcode  = '[modula id="' . $modula_gallery_id . '"]';
 
-        // Replace NextGEN shortcode with Modula Shortcode in Posts, Pages and CPTs
+        // Replace Envira shortcode with Modula Shortcode in Posts, Pages and CPTs
         $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
-            $nextgen_shortcode, $modula_shortcode);
+            $envira_shortcodes, $modula_shortcode);
         $wpdb->query($sql);
 
         $this->modula_import_result(true, __('Imported!', 'modula-importer'));
@@ -182,15 +181,13 @@ class Modula_Nextgen_Importer {
      * @param $source_path
      * @param $source_file
      * @param $description
+     * @param $title
      * @param $alt
      * @return mixed
      *
      * @since 1.0.0
      */
-    public function add_image_to_library($source_path, $source_file, $description, $alt) {
-
-        // Get full path and filename
-        $source_file_path = ABSPATH . $source_path . '/' . $source_file;
+    public function add_image_to_library($source_file_path, $source_file, $title, $description, $alt) {
 
         // Get WP upload dir
         $uploadDir = wp_upload_dir();
@@ -231,7 +228,7 @@ class Modula_Nextgen_Importer {
         $attachment = array(
             'post_mime_type' => $type,
             'guid'           => $destination_url,
-            'post_title'     => $alt,
+            'post_title'     => $title,
             'post_name'      => $alt,
             'post_content'   => $description,
         );
@@ -250,11 +247,12 @@ class Modula_Nextgen_Importer {
         $attachment->post_excerpt = $description;
         wp_update_post($attachment);
 
+
         // Return attachment data
         return array(
             'ID'      => $attachmentID,
             'src'     => $destination_url,
-            'title'   => $alt,
+            'title'   => $title,
             'alt'     => $alt,
             'caption' => $description,
         );
@@ -286,8 +284,8 @@ class Modula_Nextgen_Importer {
      */
     public static function get_instance() {
 
-        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Nextgen_Importer)) {
-            self::$instance = new Modula_Nextgen_Importer();
+        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Envira_Importer)) {
+            self::$instance = new Modula_Envira_Importer();
         }
 
         return self::$instance;
@@ -297,4 +295,4 @@ class Modula_Nextgen_Importer {
 }
 
 // Load the class.
-$modula_nextgen_importer = Modula_Nextgen_Importer::get_instance();
+$modula_envira_importer = Modula_Envira_Importer::get_instance();

@@ -9,14 +9,14 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
-define( 'MODULA_IMPORTER_VERSION', '1.0.0' );
-define( 'MODULA_IMPORTER_PATH', plugin_dir_path( __FILE__ ) );
-define( 'MODULA_IMPORTER_URL', plugin_dir_url( __FILE__ ) );
-define( 'MODULA_IMPORTER_FILE', __FILE__ );
+define('MODULA_IMPORTER_VERSION', '1.0.0');
+define('MODULA_IMPORTER_PATH', plugin_dir_path(__FILE__));
+define('MODULA_IMPORTER_URL', plugin_dir_url(__FILE__));
+define('MODULA_IMPORTER_FILE', __FILE__);
 
 require_once MODULA_IMPORTER_PATH . 'includes/class-modula-importer.php';
 
