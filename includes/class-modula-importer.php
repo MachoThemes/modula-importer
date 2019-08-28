@@ -175,11 +175,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_nextgen_importer_tab($tabs) {
-
-        $tabs['import_nextgen'] = array(
-            'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
-            'priority' => 50,
-        );
+        if(is_plugin_active('modula-pro/Modula.php') ) {
+            $tabs['import_nextgen'] = array(
+                'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
+                'priority' => 50,
+            );
+        }
 
         return $tabs;
     }
@@ -193,11 +194,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_envira_importer_tab($tabs) {
-
-        $tabs['import_envira'] = array(
-            'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
-            'priority' => 50,
-        );
+        if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_envira'] = array(
+                'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
+                'priority' => 50,
+            );
+        }
 
         return $tabs;
     }
@@ -208,8 +210,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_nextgen_importer_tab() {
-
-        include 'tabs/nextgen-importer-tab.php';
+        if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/nextgen-importer-tab.php';
+        }
     }
 
     /**
@@ -218,8 +221,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_envira_importer_tab() {
-
-        include 'tabs/envira-importer-tab.php';
+        if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/envira-importer-tab.php';
+        }
     }
 
     /**
