@@ -168,7 +168,7 @@ class Modula_Final_Tiles_Importer {
         $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $ftg_shortcode    = '[FinalTilesGallery  id="' . $gallery_id . '"]';
+        $ftg_shortcode    = '[FinalTilesGallery id="' . $gallery_id . '"]';
         $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
         // Replace Final Tiles Grid Gallery shortcode with Modula Shortcode in Posts, Pages and CPTs
