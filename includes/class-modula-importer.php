@@ -50,11 +50,17 @@ class Modula_Importer {
         // Add Importer tab for Envira
         add_filter('modula_admin_page_tabs', array($this, 'add_envira_importer_tab'));
 
+        // Add Importer tab for Final Tiles Grid gallery
+        add_filter('modula_admin_page_tabs', array($this, 'add_final_tiles_importer_tab'));
+
         // Render Importer tab for NextGEN
         add_action('modula_admin_tab_import_nextgen', array($this, 'render_nextgen_importer_tab'));
 
         // Render Importer tab for Envira
         add_action('modula_admin_tab_import_envira', array($this, 'render_envira_importer_tab'));
+
+        // Render Importer tab for Final Tiles Grid gallery
+        add_action('modula_admin_tab_import_final_tiles', array($this, 'render_final_tiles_importer_tab'));
 
         // Include required scripts for import
         add_action('admin_enqueue_scripts', array($this, 'admin_importer_scripts'));
@@ -62,6 +68,7 @@ class Modula_Importer {
         // Required files
         require_once MODULA_IMPORTER_PATH . 'includes/nextgen/class-modula-nextgen-importer.php';
         require_once MODULA_IMPORTER_PATH . 'includes/envira/class-modula-envira-importer.php';
+        require_once MODULA_IMPORTER_PATH . 'includes/final-tiles/class-modula-final-tiles-importer.php';
 
         // Load the plugin.
         $this->init();
@@ -123,6 +130,7 @@ class Modula_Importer {
     public function admin_importer_scripts() {
 
         $screen = get_current_screen();
+
         // only enqueue script if we are in Modula Settings page
         if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base) {
 
@@ -160,6 +168,25 @@ class Modula_Importer {
                         'nonce'                   => wp_create_nonce('modula-importer'),
                         'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
                         'empty_gallery_selection' => __('Please choose at least one Envira Gallery to import.', 'modula-importer'),
+                    )
+                );
+            }
+
+            // only enqueue if Final Tiles gallery plugin is active
+            if (is_plugin_active('final-tiles-grid-gallery-lite/FinalTilesGalleryLite.php')) {
+                // scripts required for final tiles importer
+                wp_register_script('modula-final-tiles-importer', MODULA_IMPORTER_URL . 'assets/js/modula-final-tiles-importer.js', '', MODULA_IMPORTER_VERSION, true);
+                wp_enqueue_script('modula-final-tiles-importer');
+
+                // Strings added to js are used for translation
+                wp_localize_script(
+                    'modula-final-tiles-importer',
+                    'modula_importer_settings',
+                    array(
+                        'ajax'                    => admin_url('admin-ajax.php'),
+                        'nonce'                   => wp_create_nonce('modula-importer'),
+                        'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => __('Please choose at least one Final Tiles Grid Gallery to import.', 'modula-importer'),
                     )
                 );
             }
@@ -205,6 +232,25 @@ class Modula_Importer {
     }
 
     /**
+     * Add Final Tiles Grid Gallery Importer tab
+     *
+     * @param $tabs
+     * @return mixed
+     *
+     * @since 1.0.0
+     */
+    public function add_final_tiles_importer_tab($tabs) {
+        if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_final_tiles'] = array(
+                'label'    => esc_html__('Import Final Tiles Grid galleries', 'modula-importer'),
+                'priority' => 60,
+            );
+        }
+
+        return $tabs;
+    }
+
+    /**
      * Render Importer tab for NextGEN
      *
      * @since 1.0.0
@@ -223,6 +269,17 @@ class Modula_Importer {
     public function render_envira_importer_tab() {
         if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/envira-importer-tab.php';
+        }
+    }
+
+    /**
+     * Render Importer tab for Final Tiles Grid gallery
+     *
+     * @since 1.0.0
+     */
+    public function render_final_tiles_importer_tab() {
+        if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/final-tiles-importer-tab.php';
         }
     }
 

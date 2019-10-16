@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Modula_Envira_Importer {
+class Modula_Final_Tiles_Importer {
 
     /**
      * Holds the class object.
@@ -23,12 +23,12 @@ class Modula_Envira_Importer {
     public function __construct() {
 
         // Add AJAX
-        add_action('wp_ajax_modula_importer_envira_gallery_import', array($this, 'envira_gallery_import'));
+        add_action('wp_ajax_modula_importer_final_tiles', array($this, 'final_tiles_gallery_import'));
 
     }
 
     /**
-     * Get all Envira Galleries
+     * Get all Final Tiles Galleries
      *
      * @return mixed
      *
@@ -38,11 +38,11 @@ class Modula_Envira_Importer {
 
         global $wpdb;
 
-        // first check if plugin is active ( pro or lite version )
+        // first check if plugin active ( LITE only for the moment )
         //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
+        if (is_plugin_active('final-tiles-grid-gallery-lite/FinalTilesGalleryLite.php')) {
 
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
+            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
             if (count($galleries) == 0) {
                 return false;
             }
@@ -54,11 +54,11 @@ class Modula_Envira_Importer {
     }
 
     /**
-     * Imports a gallery from Envira into Modula
+     * Imports a gallery from Final Tiles into Modula
      *
      * @since 1.0.0
      */
-    public function envira_gallery_import($gallery_id = '') {
+    public function final_tiles_gallery_import($gallery_id = '') {
 
         global $wpdb;
 
@@ -84,8 +84,20 @@ class Modula_Envira_Importer {
 
         }
 
-        // Get all images attached to the gallery
-        $images = get_attached_media('image', $gallery_id);
+        // Get images from Final Tiles
+        $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery_images
+    						WHERE gid = %d
+    						ORDER BY 'setOrder' ASC",
+            $gallery_id);
+        $images = $wpdb->get_results($sql);
+
+        // Get gallery configuration
+        $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery
+    						WHERE id = %d",
+            $gallery_id);
+        $gallery = $wpdb->get_row($sql);
+
+        $gallery_config = json_decode($gallery->configuration);
 
         $attachments = array();
 
@@ -93,21 +105,11 @@ class Modula_Envira_Importer {
             // Add each image to Media Library
             foreach ($images as $image) {
 
-                // get gallery data so we can get title, description and alt from envira
-                $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
-
-                $path     = get_attached_file($image->ID);
-                $filename = basename($path);
-
-                $envira_image_title = (!isset($envira_gallery_data['gallery'][$image->ID]['title']) || '' != $envira_gallery_data['gallery'][$image->ID]['title']) ? $envira_gallery_data['gallery'][$image->ID]['title'] : '';
-
-                $envira_image_caption = (!isset($envira_gallery_data['gallery'][$image->ID]['caption']) || '' != $envira_gallery_data['gallery'][$image->ID]['caption']) ? $envira_gallery_data['gallery'][$image->ID]['caption'] : wp_get_attachment_caption($image->ID);
-
-                $envira_image_alt = (!isset($envira_gallery_data['gallery'][$image->ID]['alt']) || '' != $envira_gallery_data['gallery'][$image->ID]['alt']) ? $envira_gallery_data['gallery'][$image->ID]['alt'] : get_post_meta($image->ID, '_wp_attachment_image_alt', TRUE);
-
+                $image_path = get_attached_file($image->imageId);
+                $image_name = basename(get_attached_file($image->imageId));
 
                 // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($path, $filename,$envira_image_title, $envira_image_caption, $envira_image_alt);
+                $attachment = $this->add_image_to_library($image_path, $image_name, $image->description, $image->alt, $image->title);
 
                 if ($attachment !== false) {
 
@@ -138,6 +140,7 @@ class Modula_Envira_Importer {
                 'target'      => '',
                 'width'       => 2,
                 'height'      => 2,
+                //@todo: check if pro version of final tiles has filters - in lite couldn't find them
                 'filters'     => ''
             );
         }
@@ -146,7 +149,7 @@ class Modula_Envira_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => get_the_title($gallery_id),
+            'post_title'  => $gallery_config->name,
         ));
 
         // Attach meta modula-settings to Modula CPT
@@ -165,12 +168,12 @@ class Modula_Envira_Importer {
         $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $envira_shortcodes = '[envira-gallery id="' . $gallery_id . '"]';
-        $modula_shortcode  = '[modula id="' . $modula_gallery_id . '"]';
+        $ftg_shortcode    = '[FinalTilesGallery  id="' . $gallery_id . '"]';
+        $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
-        // Replace Envira shortcode with Modula Shortcode in Posts, Pages and CPTs
+        // Replace Final Tiles Grid Gallery shortcode with Modula Shortcode in Posts, Pages and CPTs
         $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
-            $envira_shortcodes, $modula_shortcode);
+            $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
         $this->modula_import_result(true, __('Imported!', 'modula-importer'));
@@ -182,13 +185,16 @@ class Modula_Envira_Importer {
      * @param $source_path
      * @param $source_file
      * @param $description
-     * @param $title
      * @param $alt
+     * @param $title
      * @return mixed
      *
      * @since 1.0.0
      */
-    public function add_image_to_library($source_file_path, $source_file, $title, $description, $alt) {
+    public function add_image_to_library($source_path, $source_file, $description, $alt, $title) {
+
+        // Get full path and filename
+        $source_file_path = $source_path;
 
         // Get WP upload dir
         $uploadDir = wp_upload_dir();
@@ -199,7 +205,7 @@ class Modula_Envira_Importer {
         $destination_url       = $uploadDir['url'] . '/' . $destination_file;
 
         // Check file is valid
-        $wp_filetype = wp_check_filetype($source_file, null);
+        $wp_filetype = wp_check_filetype($source_path, null);
         extract($wp_filetype);
 
         if ((!$type || !$ext) && !current_user_can('unfiltered_upload')) {
@@ -248,7 +254,6 @@ class Modula_Envira_Importer {
         $attachment->post_excerpt = $description;
         wp_update_post($attachment);
 
-
         // Return attachment data
         return array(
             'ID'      => $attachmentID,
@@ -285,8 +290,8 @@ class Modula_Envira_Importer {
      */
     public static function get_instance() {
 
-        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Envira_Importer)) {
-            self::$instance = new Modula_Envira_Importer();
+        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Final_Tiles_Importer)) {
+            self::$instance = new Modula_Final_Tiles_Importer();
         }
 
         return self::$instance;
@@ -296,4 +301,4 @@ class Modula_Envira_Importer {
 }
 
 // Load the class.
-$modula_envira_importer = Modula_Envira_Importer::get_instance();
+$modula_final_tiles_importer = Modula_Final_Tiles_Importer::get_instance();
