@@ -212,7 +212,7 @@ class Modula_Importer {
                         'ajax'                    => admin_url('admin-ajax.php'),
                         'nonce'                   => wp_create_nonce('modula-importer'),
                         'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => __('Please choose at least one PhotoBlocks Gallery to import.', 'modula-importer'),
+                        'empty_gallery_selection' => __('Please choose at least one PhotoBlocks gallery to import.', 'modula-importer'),
                     )
                 );
             }

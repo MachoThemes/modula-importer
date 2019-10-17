@@ -54,7 +54,7 @@ class Modula_Photoblocks_Importer {
     }
 
     /**
-     * Imports a gallery from Final Tiles into Modula
+     * Imports a gallery from PhotoBlocks into Modula
      *
      * @since 1.0.0
      */
@@ -93,6 +93,7 @@ class Modula_Photoblocks_Importer {
         $gallery_blocks = json_decode($gallery->blocks);
         $gallery_data   = json_decode($gallery->data);
         $images         = array();
+        
         foreach ($gallery_blocks as $block) {
 
             if (NULL != $block->image->id) {
@@ -147,7 +148,6 @@ class Modula_Photoblocks_Importer {
                 'target'      => '',
                 'width'       => 2,
                 'height'      => 2,
-                //@todo: check if pro version of final tiles has filters - in lite couldn't find them
                 'filters'     => ''
             );
         }
@@ -179,7 +179,7 @@ class Modula_Photoblocks_Importer {
         $ftg_shortcode    = '[photoblocks id=' . $gallery_id . ']';
         $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
-        // Replace Final Tiles Grid Gallery shortcode with Modula Shortcode in Posts, Pages and CPTs
+        // Replace Gallery PhotoBlocks shortcode with Modula Shortcode in Posts, Pages and CPTs
         $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
