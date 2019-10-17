@@ -92,16 +92,16 @@ class Modula_Photoblocks_Importer {
 
         $gallery_blocks = json_decode($gallery->blocks);
         $gallery_data   = json_decode($gallery->data);
-        $images = array();
-        foreach($gallery_blocks as $block){
+        $images         = array();
+        foreach ($gallery_blocks as $block) {
 
-            if(NULL != $block->image->id){
+            if (NULL != $block->image->id) {
 
                 $images[] = array(
-                    'id' => $block->image->id,
-                    'description' => $block->description->text,
-                    'title' => $block->title->text,
-                    'alt' => $block->image->alt
+                    'id'          => $block->image->id,
+                    'description' => (NULL != $block->caption->description->text) ? $block->caption->description->text : '',
+                    'title'       => (NULL != $block->caption->title->text) ? $block->caption->title->text : '',
+                    'alt'         => (NULL != $block->image->alt) ? $block->image->alt : ''
                 );
             }
         }
@@ -159,6 +159,7 @@ class Modula_Photoblocks_Importer {
             'post_title'  => $gallery_data->name,
         ));
 
+
         // Attach meta modula-settings to Modula CPT
         update_post_meta($modula_gallery_id, 'modula-settings', $modula_settings);
 
@@ -175,7 +176,7 @@ class Modula_Photoblocks_Importer {
         $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $ftg_shortcode    = '[photoblocks id="' . $gallery_id . '"]';
+        $ftg_shortcode    = '[photoblocks id=' . $gallery_id . ']';
         $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
         // Replace Final Tiles Grid Gallery shortcode with Modula Shortcode in Posts, Pages and CPTs
