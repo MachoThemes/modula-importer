@@ -150,7 +150,7 @@ class Modula_Importer {
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-nextgen-importer',
-                    'modula_importer_settings',
+                    'modula_nextgen_importer_settings',
                     array(
                         'ajax'                    => admin_url('admin-ajax.php'),
                         'nonce'                   => wp_create_nonce('modula-importer'),
@@ -169,7 +169,7 @@ class Modula_Importer {
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-envira-importer',
-                    'modula_importer_settings',
+                    'modula_envira_importer_settings',
                     array(
                         'ajax'                    => admin_url('admin-ajax.php'),
                         'nonce'                   => wp_create_nonce('modula-importer'),
@@ -188,7 +188,7 @@ class Modula_Importer {
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-final-tiles-importer',
-                    'modula_importer_settings',
+                    'modula_ftg_importer_settings',
                     array(
                         'ajax'                    => admin_url('admin-ajax.php'),
                         'nonce'                   => wp_create_nonce('modula-importer'),
@@ -207,7 +207,7 @@ class Modula_Importer {
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-photoblocks-importer',
-                    'modula_importer_settings',
+                    'modula_pb_importer_settings',
                     array(
                         'ajax'                    => admin_url('admin-ajax.php'),
                         'nonce'                   => wp_create_nonce('modula-importer'),

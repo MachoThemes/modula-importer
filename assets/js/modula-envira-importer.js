@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
         // Check if gallery was selected
         var galleries = $('input[name=gallery]:checked');
         if (0 == galleries.length) {
-            alert(modula_importer_settings.empty_gallery_selection);
+            alert(modula_envira_importer_settings.empty_gallery_selection);
             return false;
         }
 
@@ -57,11 +57,11 @@ jQuery(document).ready(function ($) {
         var status = $('form#modula_importer_envira label[data-id=' + id + ']');
 
         $(status).removeClass().addClass('importing');
-        $('span', $(status)).html(modula_importer_settings.importing);
+        $('span', $(status)).html(modula_envira_importer_settings.importing);
 
         // Do request
         $.ajax({
-            url: modula_importer_settings.ajax,
+            url: modula_envira_importer_settings.ajax,
             type: 'post',
             async: true,
             cache: false,
@@ -69,7 +69,7 @@ jQuery(document).ready(function ($) {
             data: {
                 action: 'modula_importer_envira_gallery_import',
                 id: id,
-                nonce: modula_importer_settings.nonce
+                nonce: modula_envira_importer_settings.nonce
             },
             success: function (response) {
                 status_update_envira(id_array, curIndex, response.success, response.message);

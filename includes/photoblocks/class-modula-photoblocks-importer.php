@@ -93,7 +93,7 @@ class Modula_Photoblocks_Importer {
         $gallery_blocks = json_decode($gallery->blocks);
         $gallery_data   = json_decode($gallery->data);
         $images         = array();
-        
+
         foreach ($gallery_blocks as $block) {
 
             if (NULL != $block->image->id) {
