@@ -85,29 +85,27 @@ class Modula_Envira_Importer {
         }
 
         // Get all images attached to the gallery
-        $images = get_attached_media('image', $gallery_id);
+        $eg_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
+        $images  = $eg_data['gallery'];
 
         $attachments = array();
 
         if (is_array($images) && count($images) > 0) {
             // Add each image to Media Library
-            foreach ($images as $image) {
+            foreach ($images as $image_id => $image) {
 
-                // get gallery data so we can get title, description and alt from envira
-                $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
-
-                $path     = get_attached_file($image->ID);
+                $path     = get_attached_file($image_id);
                 $filename = basename($path);
 
-                $envira_image_title = (!isset($envira_gallery_data['gallery'][$image->ID]['title']) || '' != $envira_gallery_data['gallery'][$image->ID]['title']) ? $envira_gallery_data['gallery'][$image->ID]['title'] : '';
+                $envira_image_title = (!isset($image['title']) || '' != $image['title']) ? $image['title'] : '';
 
-                $envira_image_caption = (!isset($envira_gallery_data['gallery'][$image->ID]['caption']) || '' != $envira_gallery_data['gallery'][$image->ID]['caption']) ? $envira_gallery_data['gallery'][$image->ID]['caption'] : wp_get_attachment_caption($image->ID);
+                $envira_image_caption = (!isset($image['caption']) || '' != $image['caption']) ? $image['caption'] : wp_get_attachment_caption($image_id);
 
-                $envira_image_alt = (!isset($envira_gallery_data['gallery'][$image->ID]['alt']) || '' != $envira_gallery_data['gallery'][$image->ID]['alt']) ? $envira_gallery_data['gallery'][$image->ID]['alt'] : get_post_meta($image->ID, '_wp_attachment_image_alt', TRUE);
+                $envira_image_alt = (!isset($image['alt']) || '' != $image['alt']) ? $image['alt'] : get_post_meta($image_id, '_wp_attachment_image_alt', TRUE);
 
 
                 // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($path, $filename,$envira_image_title, $envira_image_caption, $envira_image_alt);
+                $attachment = $this->add_image_to_library($path, $filename, $envira_image_title, $envira_image_caption, $envira_image_alt);
 
                 if ($attachment !== false) {
 
