@@ -163,7 +163,7 @@ class Modula_Nextgen_Importer {
         }
 
         // Remember that this gallery has been imported
-        $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
+        $importer_settings['galleries']['nextgen'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
         $nextgen_shortcode = '[ngg_images gallery_ids="' . $gallery_id . '"]';

@@ -22,7 +22,7 @@ $nextgen_galleries = $nextgen->get_galleries();
                     <td>
 
                         <?php foreach ($nextgen_galleries as $ng_gallery) {
-                            $imported = ((isset($import_settings['galleries']) && isset($import_settings['galleries'][$ng_gallery->gid])) ? true : false);
+                            $imported = ((isset($import_settings['galleries']['nextgen']) && isset($import_settings['galleries']['nextgen'][$ng_gallery->gid])) ? true : false);
                             ?>
 
                             <div>

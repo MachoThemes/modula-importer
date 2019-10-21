@@ -24,7 +24,7 @@ $final_tiles_galleries = $final_tiles->get_galleries();
                         <?php foreach ($final_tiles_galleries as $ftg_gallery) {
 
                             $ftg_config = json_decode($ftg_gallery->configuration);
-                            $imported   = ((isset($import_settings['galleries']) && isset($import_settings['galleries'][$ftg_gallery->Id])) ? true : false);
+                            $imported   = ((isset($import_settings['galleries']['final_tiles']) && isset($import_settings['galleries']['final_tiles'][$ftg_gallery->Id])) ? true : false);
                             ?>
                             <div>
                                 <label for="galleries-<?php echo esc_attr($ftg_gallery->Id); ?>"

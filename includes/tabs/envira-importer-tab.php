@@ -22,7 +22,7 @@ $envira_galleries = $envira->get_galleries();
                     <td>
 
                         <?php foreach ($envira_galleries as $envira_gallery) {
-                            $imported = ((isset($import_settings['galleries']) && isset($import_settings['galleries'][$envira_gallery->ID])) ? true : false);
+                            $imported = ((isset($import_settings['galleries']['envira']) && isset($import_settings['galleries']['envira'][$envira_gallery->ID])) ? true : false);
                             ?>
 
                             <div>

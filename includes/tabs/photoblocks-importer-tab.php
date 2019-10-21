@@ -24,7 +24,7 @@ $photoblocks_galleries = $photoblocks->get_galleries();
                         <?php foreach ($photoblocks_galleries as $photoblocks_gallery) {
 
                             $photoblock_blocks = json_decode($photoblocks_gallery->blocks);
-                            $imported   = ((isset($import_settings['galleries']) && isset($import_settings['galleries'][$photoblocks_gallery->id])) ? true : false);
+                            $imported   = ((isset($import_settings['galleries']['photoblocks']) && isset($import_settings['galleries']['photoblocks'][$photoblocks_gallery->id])) ? true : false);
                             ?>
                             <div>
                                 <label for="galleries-<?php echo esc_attr($photoblocks_gallery->id); ?>"
