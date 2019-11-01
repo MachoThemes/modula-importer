@@ -18,6 +18,7 @@ $wp_core_galleries = $wp_core->get_galleries();
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('Pages/Posts with WP Core Galleries', 'modula-importer'); ?>
+                        <p class="description"> <?php esc_html_e('These are specific to [gallery ids="x,x,x"] shortcodes that come from WP core and not Gallery Blocks from Gutenberg', 'modula-importer'); ?></p>
                     </th>
                     <td>
 
@@ -57,6 +58,7 @@ $wp_core_galleries = $wp_core->get_galleries();
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('There are no wp core galleries in pages or posts', 'modula-importer'); ?>
+                        <p class="description"> <?php esc_html_e('These are specific to [gallery ids="x,x,x"] shortcodes that come from WP core and not Gallery Blocks from Gutenberg', 'modula-importer'); ?></p>
                     </th>
                 </tr>
             <?php } ?>
