@@ -37,7 +37,7 @@ class Modula_WP_Core_Gallery_Importer {
     public function get_galleries() {
 
         global $wpdb;
-
+        
         $post_in   = "'post','page'";
         $sql       = "SELECT * FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%' AND `post_type` IN ($post_in)";
         $galleries = $wpdb->get_results($sql);
@@ -87,14 +87,14 @@ class Modula_WP_Core_Gallery_Importer {
         $search_string = '[gallery';
         $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
         $result        = preg_match_all($pattern, $content, $matches);
-        $images        = array();
 
         if ($result && $result > 0) {
             foreach ($matches[0] as $sc) {
+                $images = array();
 
-                $pattern   = '/ids\s*=\s*\"([\s\S]*?)\"/';
-                $result    = preg_match($pattern, $sc, $gallery_ids);
-                $image_ids = explode(',', $gallery_ids[1]);
+                $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
+                $result            = preg_match($pattern, $sc, $gallery_ids);
+                $image_ids         = explode(',', $gallery_ids[1]);
                 $gallery_image_ids = $gallery_ids[0];
 
                 foreach ($image_ids as $image) {
