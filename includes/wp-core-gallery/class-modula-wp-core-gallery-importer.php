@@ -37,8 +37,17 @@ class Modula_WP_Core_Gallery_Importer {
     public function get_galleries() {
 
         global $wpdb;
-        
+
         $post_in   = "'post','page'";
+        $post_types = get_post_types(array('show_in_menu' => true,'public'=>true));
+
+        foreach($post_types as $post_type){
+            // exclude previous set and attachment from sql query
+            if($post_type != 'post' && $post_type != 'page' && $post_type != 'attachment'){
+                $post_in .= ",'".$post_type."'";
+            }
+        }
+
         $sql       = "SELECT * FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%' AND `post_type` IN ($post_in)";
         $galleries = $wpdb->get_results($sql);
 
