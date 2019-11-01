@@ -14,7 +14,6 @@ $wp_core_galleries = $wp_core->get_galleries();
             <?php if (false != $wp_core_galleries) {
                 $import_settings = get_option('modula_importer');
                 ?>
-                <!-- If NextGen gallery plugin is installed and active and there are galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('Pages/Posts with WP Core Galleries', 'modula-importer'); ?>
@@ -23,20 +22,16 @@ $wp_core_galleries = $wp_core->get_galleries();
                     <td>
 
                         <?php foreach ($wp_core_galleries as $wp_core_gallery) {
-                            $imported = ((isset($import_settings['galleries']['wp-core']) && isset($import_settings['galleries']['wp-core'][$wp_core_gallery->ID])) ? true : false);
                             ?>
 
                             <div>
                                 <label for="galleries-<?php echo esc_attr($wp_core_gallery->ID); ?>"
-                                       data-id="<?php echo esc_attr($wp_core_gallery->ID); ?>"<?php echo($imported ? ' class="imported"' : ''); ?>>
+                                       data-id="<?php echo esc_attr($wp_core_gallery->ID); ?>">
                                     <input type="checkbox" name="gallery"
                                            id="galleries-<?php echo esc_attr($wp_core_gallery->ID); ?>"
                                            value="<?php echo esc_attr($wp_core_gallery->ID); ?>"/>
                                     <?php echo esc_html($wp_core_gallery->post_title); ?>
                                     <span style="color:blue;">
-                                    <?php if ($imported) {
-                                        esc_html_e('Imported', 'modula-importer');
-                                    } ?>
                                 </span>
                             </div>
 
@@ -54,10 +49,9 @@ $wp_core_galleries = $wp_core->get_galleries();
                     </td>
                 </tr>
             <?php } else if (false == $wp_core_galleries) { ?>
-                <!-- If NextGEN gallery plugin is installed and active but there are no galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
-                        <?php esc_html_e('There are no wp core galleries in pages or posts', 'modula-importer'); ?>
+                        <?php esc_html_e('There are no WP core galleries.', 'modula-importer'); ?>
                         <p class="description"> <?php esc_html_e('These are specific to [gallery ids="x,x,x"] shortcodes that come from WP core and not Gallery Blocks from Gutenberg', 'modula-importer'); ?></p>
                     </th>
                 </tr>

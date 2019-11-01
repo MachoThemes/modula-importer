@@ -118,7 +118,6 @@ class Modula_WP_Core_Gallery_Importer {
                     );
                 }
 
-
                 $attachments = array();
 
                 if (is_array($images) && count($images) > 0) {
@@ -178,22 +177,12 @@ class Modula_WP_Core_Gallery_Importer {
                 // Attach meta modula-images to Modula CPT
                 update_post_meta($modula_gallery_id, 'modula-images', $modula_images);
 
-                $importer_settings = get_option('modula_importer');
-
-                if (!isset($importer_settings['galleries'])) {
-                    $importer_settings['galleries'] = array();
-                }
-
-                // Remember that this gallery has been imported
-                $importer_settings['galleries']['wp-core'][$page_id] = $page_id;
-                update_option('modula_importer', $importer_settings);
-
-                $ftg_shortcode    = '[gallery ' . $gallery_image_ids . ']';
+                $wp_core_shortcode    = '[gallery ' . $gallery_image_ids . ']';
                 $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
                 // Replace Gallery PhotoBlocks shortcode with Modula Shortcode in Posts, Pages and CPTs
                 $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
-                    $ftg_shortcode, $modula_shortcode);
+                    $wp_core_shortcode, $modula_shortcode);
                 $wpdb->query($sql);
             }
         }
