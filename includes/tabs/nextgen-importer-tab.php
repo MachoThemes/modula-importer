@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $nextgen           = Modula_Nextgen_Importer::get_instance();
 $nextgen_galleries = $nextgen->get_galleries();
+
 ?>
 <div class="row">
     <form id="modula_importer_nextgen" method="post">
@@ -12,7 +13,8 @@ $nextgen_galleries = $nextgen->get_galleries();
         <table class="form-table">
             <tbody>
             <?php if ('inactive' != $nextgen_galleries && false != $nextgen_galleries) {
-                $import_settings = get_option('modula_importer');
+                $import_settings = get_option( 'modula_importer' );
+                $import_settings = wp_parse_args( $import_settings, array( 'galleries' => array() ) );
                 ?>
                 <!-- If NextGen gallery plugin is installed and active and there are galleries created -->
                 <tr valign="top">
@@ -22,21 +24,18 @@ $nextgen_galleries = $nextgen->get_galleries();
                     <td>
 
                         <?php foreach ($nextgen_galleries as $ng_gallery) {
-                            $imported = ((isset($import_settings['galleries']) && isset($import_settings['galleries'][$ng_gallery->gid])) ? true : false);
                             ?>
 
                             <div>
-                                <label for="galleries-<?php echo esc_attr($ng_gallery->gid); ?>"
-                                       data-id="<?php echo esc_attr($ng_gallery->gid); ?>"<?php echo($imported ? ' class="imported"' : ''); ?>>
-                                    <input type="checkbox" name="gallery"
-                                           id="galleries-<?php echo esc_attr($ng_gallery->gid); ?>"
-                                           value="<?php echo esc_attr($ng_gallery->gid); ?>"/>
+                                <label for="galleries-<?php echo esc_attr($ng_gallery->gid); ?>" data-id="<?php echo esc_attr($ng_gallery->gid); ?>">
+                                    <input type="checkbox" name="gallery" id="galleries-<?php echo esc_attr($ng_gallery->gid); ?>" value="<?php echo esc_attr($ng_gallery->gid); ?>"/>
                                     <?php echo esc_html($ng_gallery->title); ?>
                                     <span style="color:blue;">
-                                    <?php if ($imported) {
+                                    <?php if ( isset($import_settings['galleries'][$ng_gallery->gid]) ) {
                                         esc_html_e('Imported', 'modula-importer');
                                     } ?>
-                                </span>
+                                    </span>
+                                </label>
                             </div>
 
                         <?php } ?>

@@ -84,62 +84,44 @@ class Modula_Envira_Importer {
         }
 
         // Get all images attached to the gallery
-        $images = get_attached_media('image', $gallery_id);
+        $modula_images = array();
 
-        $attachments = array();
+        // get gallery data so we can get title, description and alt from envira
+        $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
+        if ( isset( $envira_gallery_data['gallery'] ) && count( $envira_gallery_data['gallery'] ) > 0 ) {
+            foreach ( $envira_gallery_data['gallery'] as $imageID => $image ) {
+                
+                $envira_image_title = (!isset($image['title']) || '' != $image['title']) ? $image['title'] : '';
 
-        if (is_array($images) && count($images) > 0) {
-            // Add each image to Media Library
-            foreach ($images as $image) {
+                $envira_image_caption = (!isset($image['caption']) || '' != $image['caption']) ? $image['caption'] : wp_get_attachment_caption($imageID);
 
-                // get gallery data so we can get title, description and alt from envira
-                $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
-
-                $path     = get_attached_file($image->ID);
-                $filename = basename($path);
-
-                $envira_image_title = (!isset($envira_gallery_data['gallery'][$image->ID]['title']) || '' != $envira_gallery_data['gallery'][$image->ID]['title']) ? $envira_gallery_data['gallery'][$image->ID]['title'] : '';
-
-                $envira_image_caption = (!isset($envira_gallery_data['gallery'][$image->ID]['caption']) || '' != $envira_gallery_data['gallery'][$image->ID]['caption']) ? $envira_gallery_data['gallery'][$image->ID]['caption'] : wp_get_attachment_caption($image->ID);
-
-                $envira_image_alt = (!isset($envira_gallery_data['gallery'][$image->ID]['alt']) || '' != $envira_gallery_data['gallery'][$image->ID]['alt']) ? $envira_gallery_data['gallery'][$image->ID]['alt'] : get_post_meta($image->ID, '_wp_attachment_image_alt', TRUE);
+                $envira_image_alt = (!isset($image['alt']) || '' != $image['alt']) ? $image['alt'] : get_post_meta($imageID, '_wp_attachment_image_alt', TRUE);
+                $envira_image_url = (!isset($image['link']) || '' != $image['link']) ? $image['link'] : '';
 
 
-                // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($path, $filename,$envira_image_title, $envira_image_caption, $envira_image_alt);
+                $modula_images[] = array(
+                    'id'          => $imageID,
+                    'alt'         => $envira_image_alt,
+                    'title'       => $envira_image_title,
+                    'description' => $envira_image_caption,
+                    'halign'      => 'center',
+                    'valign'      => 'middle',
+                    'link'        => $envira_image_url,
+                    'target'      => '',
+                    'width'       => 2,
+                    'height'      => 2,
+                    'filters'     => ''
+                );
 
-                if ($attachment !== false) {
-
-                    // Add to array of attachments
-                    $attachments[] = $attachment;
-                }
             }
         }
 
-        if (count($attachments) == 0) {
+        if (count($modula_images) == 0) {
             $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
         $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
-
-        // Build Modula Gallery modula-images metadata
-        $modula_images = array();
-        foreach ($attachments as $attachment) {
-            $modula_images[] = array(
-                'id'          => $attachment['ID'],
-                'alt'         => $attachment['alt'],
-                'title'       => $attachment['title'],
-                'description' => $attachment['caption'],
-                'halign'      => 'center',
-                'valign'      => 'middle',
-                'link'        => $attachment['src'],
-                'target'      => '',
-                'width'       => 2,
-                'height'      => 2,
-                'filters'     => ''
-            );
-        }
 
         // Create Modula CPT
         $modula_gallery_id = wp_insert_post(array(
@@ -174,91 +156,6 @@ class Modula_Envira_Importer {
 
         $this->modula_import_result(true, __('Imported!', 'modula-importer'));
     }
-
-    /**
-     * Add image to library
-     *
-     * @param $source_path
-     * @param $source_file
-     * @param $description
-     * @param $title
-     * @param $alt
-     * @return mixed
-     *
-     * @since 1.0.0
-     */
-    public function add_image_to_library($source_file_path, $source_file, $title, $description, $alt) {
-
-        // Get WP upload dir
-        $uploadDir = wp_upload_dir();
-
-        // Create destination file paths and URLs
-        $destination_file      = wp_unique_filename($uploadDir['path'], $source_file);
-        $destination_file_path = $uploadDir['path'] . '/' . $destination_file;
-        $destination_url       = $uploadDir['url'] . '/' . $destination_file;
-
-        // Check file is valid
-        $wp_filetype = wp_check_filetype($source_file, null);
-        extract($wp_filetype);
-
-        if ((!$type || !$ext) && !current_user_can('unfiltered_upload')) {
-            return false;
-        }
-
-        $result = copy($source_file_path, $destination_file_path);
-
-        if (!$result) {
-
-            return false;
-        }
-
-        // Set file permissions
-        $stat  = stat($destination_file_path);
-        $perms = $stat['mode'] & 0000666;
-        chmod($destination_file_path, $perms);
-
-        // Apply upload filters
-        $return = apply_filters('wp_handle_upload', array(
-            'file' => $destination_file_path,
-            'url'  => $destination_url,
-            'type' => $type,
-        ));
-
-        // Construct the attachment array
-        $attachment = array(
-            'post_mime_type' => $type,
-            'guid'           => $destination_url,
-            'post_title'     => $title,
-            'post_name'      => $alt,
-            'post_content'   => $description,
-        );
-
-        // Save as attachment
-        $attachmentID = wp_insert_attachment($attachment, $destination_file_path);
-
-        // Update attachment metadata
-        if (!is_wp_error($attachmentID)) {
-            $metadata = wp_generate_attachment_metadata($attachmentID, $destination_file_path);
-            wp_update_attachment_metadata($attachmentID, wp_generate_attachment_metadata($attachmentID, $destination_file_path));
-        }
-
-        update_post_meta($attachmentID, '_wp_attachment_image_alt', $alt);
-        $attachment               = get_post($attachmentID);
-        $attachment->post_excerpt = $description;
-        wp_update_post($attachment);
-
-
-        // Return attachment data
-        return array(
-            'ID'      => $attachmentID,
-            'src'     => $destination_url,
-            'title'   => $title,
-            'alt'     => $alt,
-            'caption' => $description,
-        );
-
-    }
-
 
     /**
      * Returns result
