@@ -253,12 +253,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_nextgen_importer_tab($tabs) {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
             $tabs['import_nextgen'] = array(
                 'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
                 'priority' => 50,
             );
-        }
+       // }
 
         return $tabs;
     }
@@ -272,12 +272,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_envira_importer_tab($tabs) {
-        if (is_plugin_active('modula-pro/Modula.php')) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
             $tabs['import_envira'] = array(
                 'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
                 'priority' => 50,
             );
-        }
+       // }
 
         return $tabs;
     }
@@ -291,12 +291,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_final_tiles_importer_tab($tabs) {
-        if (is_plugin_active('modula-pro/Modula.php')) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
             $tabs['import_final_tiles'] = array(
                 'label'    => esc_html__('Import Final Tiles Grid galleries', 'modula-importer'),
                 'priority' => 60,
             );
-        }
+       // }
 
         return $tabs;
     }
@@ -310,12 +310,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_photoblocks_importer_tab($tabs) {
-        if (is_plugin_active('modula-pro/Modula.php')) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
             $tabs['import_photoblocks'] = array(
                 'label'    => esc_html__('Import Gallery PhotoBlocks galleries', 'modula-importer'),
                 'priority' => 60,
             );
-        }
+       // }
 
         return $tabs;
     }
@@ -329,12 +329,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_wp_core_importer_tab($tabs) {
-        if (is_plugin_active('modula-pro/Modula.php')) {
+       // if (is_plugin_active('modula-pro/Modula.php')) {
             $tabs['import_wp_core'] = array(
                 'label'    => esc_html__('WP Core galleries', 'modula-importer'),
                 'priority' => 60,
             );
-        }
+       // }
 
         return $tabs;
     }
@@ -345,9 +345,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_nextgen_importer_tab() {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+       // if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/nextgen-importer-tab.php';
-        }
+       // }
     }
 
     /**
@@ -356,9 +356,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_envira_importer_tab() {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/envira-importer-tab.php';
-        }
+      //  }
     }
 
     /**
@@ -367,9 +367,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_final_tiles_importer_tab() {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+       // if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/final-tiles-importer-tab.php';
-        }
+       // }
     }
 
     /**
@@ -378,9 +378,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_photoblocks_importer_tab() {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/photoblocks-importer-tab.php';
-        }
+       // }
     }
 
     /**
@@ -389,9 +389,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_wp_core_importer_tab() {
-        if(is_plugin_active('modula-pro/Modula.php') ) {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
             include 'tabs/wp-core-importer-tab.php';
-        }
+       // }
     }
 
     /**
