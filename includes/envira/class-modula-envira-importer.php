@@ -39,6 +39,7 @@ class Modula_Envira_Importer {
         global $wpdb;
 
         // first check if plugin is active ( pro or lite version )
+        //@TODO check if remnants are available and not if plugin is active
         if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
 
             $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
@@ -143,7 +144,7 @@ class Modula_Envira_Importer {
         }
 
         // Remember that this gallery has been imported
-        $importer_settings['galleries'][$gallery_id] = $modula_gallery_id;
+        $importer_settings['galleries']['envira'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
         $envira_shortcodes = '[envira-gallery id="' . $gallery_id . '"]';

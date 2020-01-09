@@ -50,11 +50,29 @@ class Modula_Importer {
         // Add Importer tab for Envira
         add_filter('modula_admin_page_tabs', array($this, 'add_envira_importer_tab'));
 
+        // Add Importer tab for Final Tiles Grid gallery
+        add_filter('modula_admin_page_tabs', array($this, 'add_final_tiles_importer_tab'));
+
+        // Add Importer tab for Final Tiles Grid gallery
+        add_filter('modula_admin_page_tabs', array($this, 'add_photoblocks_importer_tab'));
+
+        // Add Importer tab for WP Core gallery
+        add_filter('modula_admin_page_tabs', array($this, 'add_wp_core_importer_tab'));
+
         // Render Importer tab for NextGEN
         add_action('modula_admin_tab_import_nextgen', array($this, 'render_nextgen_importer_tab'));
 
         // Render Importer tab for Envira
         add_action('modula_admin_tab_import_envira', array($this, 'render_envira_importer_tab'));
+
+        // Render Importer tab for Final Tiles Grid gallery
+        add_action('modula_admin_tab_import_final_tiles', array($this, 'render_final_tiles_importer_tab'));
+
+        // Render Importer tab for Gallery Photoblocks
+        add_action('modula_admin_tab_import_photoblocks', array($this, 'render_photoblocks_importer_tab'));
+
+        // Render Importer tab for WP Core gallery
+        add_action('modula_admin_tab_import_wp_core', array($this, 'render_wp_core_importer_tab'));
 
         // Include required scripts for import
         add_action('admin_enqueue_scripts', array($this, 'admin_importer_scripts'));
@@ -62,6 +80,9 @@ class Modula_Importer {
         // Required files
         require_once MODULA_IMPORTER_PATH . 'includes/nextgen/class-modula-nextgen-importer.php';
         require_once MODULA_IMPORTER_PATH . 'includes/envira/class-modula-envira-importer.php';
+        require_once MODULA_IMPORTER_PATH . 'includes/final-tiles/class-modula-final-tiles-importer.php';
+        require_once MODULA_IMPORTER_PATH . 'includes/photoblocks/class-modula-photoblocks-importer.php';
+        require_once MODULA_IMPORTER_PATH . 'includes/wp-core-gallery/class-modula-wp-core-gallery-importer.php';
 
         // Load the plugin.
         $this->init();
@@ -123,22 +144,25 @@ class Modula_Importer {
     public function admin_importer_scripts() {
 
         $screen = get_current_screen();
+
         // only enqueue script if we are in Modula Settings page
         if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base) {
 
+            $ajax_url = admin_url('admin-ajax.php');
+            $nonce = wp_create_nonce('modula-importer');
             // only enqueue if nextGEN gallery plugin is active
             if (is_plugin_active('nextgen-gallery/nggallery.php')) {
-                // scripts required for nextgen importer
+                // scripts required for nextGEN importer
                 wp_register_script('modula-nextgen-importer', MODULA_IMPORTER_URL . 'assets/js/modula-nextgen-importer.js', '', MODULA_IMPORTER_VERSION, true);
                 wp_enqueue_script('modula-nextgen-importer');
 
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-nextgen-importer',
-                    'modula_importer_settings',
+                    'modula_nextgen_importer_settings',
                     array(
-                        'ajax'                    => admin_url('admin-ajax.php'),
-                        'nonce'                   => wp_create_nonce('modula-importer'),
+                        'ajax'                    => $ajax_url,
+                        'nonce'                   => $nonce,
                         'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
                         'empty_gallery_selection' => esc_html__('Please choose at least one NextGEN Gallery to import.', 'modula-importer'),
                     )
@@ -147,22 +171,76 @@ class Modula_Importer {
 
             // only enqueue if Envira gallery plugin is active
             if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
-                // scripts required for envira importer
+                // scripts required for Envira importer
                 wp_register_script('modula-envira-importer', MODULA_IMPORTER_URL . 'assets/js/modula-envira-importer.js', '', MODULA_IMPORTER_VERSION, true);
                 wp_enqueue_script('modula-envira-importer');
 
                 // Strings added to js are used for translation
                 wp_localize_script(
                     'modula-envira-importer',
-                    'modula_importer_settings',
+                    'modula_envira_importer_settings',
                     array(
-                        'ajax'                    => admin_url('admin-ajax.php'),
-                        'nonce'                   => wp_create_nonce('modula-importer'),
+                        'ajax'                    => $ajax_url,
+                        'nonce'                   => $nonce,
                         'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
                         'empty_gallery_selection' => esc_html__('Please choose at least one Envira Gallery to import.', 'modula-importer'),
                     )
                 );
             }
+
+            // only enqueue if Final Tiles gallery plugin is active
+            if (is_plugin_active('final-tiles-grid-gallery-lite/FinalTilesGalleryLite.php')) {
+                // scripts required for final tiles importer
+                wp_register_script('modula-final-tiles-importer', MODULA_IMPORTER_URL . 'assets/js/modula-final-tiles-importer.js', '', MODULA_IMPORTER_VERSION, true);
+                wp_enqueue_script('modula-final-tiles-importer');
+
+                // Strings added to js are used for translation
+                wp_localize_script(
+                    'modula-final-tiles-importer',
+                    'modula_ftg_importer_settings',
+                    array(
+                        'ajax'                    => $ajax_url,
+                        'nonce'                   => $nonce,
+                        'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => __('Please choose at least one Final Tiles Grid Gallery to import.', 'modula-importer'),
+                    )
+                );
+            }
+
+            // only enqueue if Gallery PhotoBlocks plugin is active
+            if (is_plugin_active('photoblocks-grid-gallery/photoblocks.php')) {
+                // scripts required for final tiles importer
+                wp_register_script('modula-photoblocks-importer', MODULA_IMPORTER_URL . 'assets/js/modula-photoblocks-importer.js', '', MODULA_IMPORTER_VERSION, true);
+                wp_enqueue_script('modula-photoblocks-importer');
+
+                // Strings added to js are used for translation
+                wp_localize_script(
+                    'modula-photoblocks-importer',
+                    'modula_pb_importer_settings',
+                    array(
+                        'ajax'                    => $ajax_url,
+                        'nonce'                   => $nonce,
+                        'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => __('Please choose at least one PhotoBlocks gallery to import.', 'modula-importer'),
+                    )
+                );
+            }
+
+            // scripts required for wp core importer
+            wp_register_script('modula-wp-core-gallery-importer', MODULA_IMPORTER_URL . 'assets/js/modula-wp-core-gallery-importer.js', '', MODULA_IMPORTER_VERSION, true);
+            wp_enqueue_script('modula-wp-core-gallery-importer');
+
+            // Strings added to js are used for translation
+            wp_localize_script(
+                'modula-wp-core-gallery-importer',
+                'modula_wp_core_gallery_importer_settings',
+                array(
+                    'ajax'                    => $ajax_url,
+                    'nonce'                   => $nonce,
+                    'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
+                    'empty_gallery_selection' => __('Please choose at least one gallery.', 'modula-importer'),
+                )
+            );
         }
     }
 
@@ -175,11 +253,12 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_nextgen_importer_tab($tabs) {
-
-        $tabs['import_nextgen'] = array(
-            'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
-            'priority' => 50,
-        );
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
+            $tabs['import_nextgen'] = array(
+                'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
+                'priority' => 50,
+            );
+       // }
 
         return $tabs;
     }
@@ -193,11 +272,69 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_envira_importer_tab($tabs) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_envira'] = array(
+                'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
+                'priority' => 50,
+            );
+       // }
 
-        $tabs['import_envira'] = array(
-            'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
-            'priority' => 50,
-        );
+        return $tabs;
+    }
+
+    /**
+     * Add Final Tiles Grid Gallery Importer tab
+     *
+     * @param $tabs
+     * @return mixed
+     *
+     * @since 1.0.0
+     */
+    public function add_final_tiles_importer_tab($tabs) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_final_tiles'] = array(
+                'label'    => esc_html__('Import Final Tiles Grid galleries', 'modula-importer'),
+                'priority' => 60,
+            );
+       // }
+
+        return $tabs;
+    }
+
+    /**
+     * Add Gallery PhotoBlocks Importer tab
+     *
+     * @param $tabs
+     * @return mixed
+     *
+     * @since 1.0.0
+     */
+    public function add_photoblocks_importer_tab($tabs) {
+        //if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_photoblocks'] = array(
+                'label'    => esc_html__('Import Gallery PhotoBlocks galleries', 'modula-importer'),
+                'priority' => 60,
+            );
+       // }
+
+        return $tabs;
+    }
+
+    /**
+     * Add WP Core Galleries Importer tab
+     *
+     * @param $tabs
+     * @return mixed
+     *
+     * @since 1.0.0
+     */
+    public function add_wp_core_importer_tab($tabs) {
+       // if (is_plugin_active('modula-pro/Modula.php')) {
+            $tabs['import_wp_core'] = array(
+                'label'    => esc_html__('WP Core galleries', 'modula-importer'),
+                'priority' => 60,
+            );
+       // }
 
         return $tabs;
     }
@@ -208,8 +345,9 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_nextgen_importer_tab() {
-
-        include 'tabs/nextgen-importer-tab.php';
+       // if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/nextgen-importer-tab.php';
+       // }
     }
 
     /**
@@ -218,8 +356,42 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_envira_importer_tab() {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/envira-importer-tab.php';
+      //  }
+    }
 
-        include 'tabs/envira-importer-tab.php';
+    /**
+     * Render Importer tab for Final Tiles Grid gallery
+     *
+     * @since 1.0.0
+     */
+    public function render_final_tiles_importer_tab() {
+       // if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/final-tiles-importer-tab.php';
+       // }
+    }
+
+    /**
+     * Render Importer tab for Gallery PhotoBlocks
+     *
+     * @since 1.0.0
+     */
+    public function render_photoblocks_importer_tab() {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/photoblocks-importer-tab.php';
+       // }
+    }
+
+    /**
+     * Render Importer tab for WP Core galleries
+     *
+     * @since 1.0.0
+     */
+    public function render_wp_core_importer_tab() {
+        //if(is_plugin_active('modula-pro/Modula.php') ) {
+            include 'tabs/wp-core-importer-tab.php';
+       // }
     }
 
     /**

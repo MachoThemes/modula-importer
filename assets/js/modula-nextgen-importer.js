@@ -17,7 +17,7 @@
                 // Check if gallery was selected
                 var galleries = $('input[name=gallery]:checked');
                 if (0 == galleries.length) {
-                    alert(modula_importer_settings.empty_gallery_selection);
+                    alert(modula_nextgen_importer_settings.empty_gallery_selection);
                     return false;
                 }
 
@@ -49,7 +49,7 @@
                     data: {
                         action: 'modula_importer_nextgen_gallery_import',
                         id: gallery_id,
-                        nonce: modula_importer_settings.nonce
+                        nonce: modula_nextgen_importer_settings.nonce
                     },
                     success: function( response ) {
                         if ( ! response.success ) {
@@ -91,6 +91,7 @@
                 $('form#modula_importer_nextgen :input').prop('disabled', false);
             }
 
+
         },
 
         completeUpgrade: function() {
@@ -116,12 +117,10 @@
                 }
             };
             $.ajax(opts);
-            
         }
     };
 
     $( document ).ready(function(){
         modulaNextgenImporter.init();
     });
-
 })( jQuery );

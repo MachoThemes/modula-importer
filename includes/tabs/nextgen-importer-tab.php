@@ -24,6 +24,7 @@ $nextgen_galleries = $nextgen->get_galleries();
                     <td>
 
                         <?php foreach ($nextgen_galleries as $ng_gallery) {
+                            $imported = ((isset($import_settings['galleries']['nextgen']) && isset($import_settings['galleries']['nextgen'][$ng_gallery->gid])) ? true : false);
                             ?>
 
                             <div>
@@ -31,7 +32,7 @@ $nextgen_galleries = $nextgen->get_galleries();
                                     <input type="checkbox" name="gallery" id="galleries-<?php echo esc_attr($ng_gallery->gid); ?>" value="<?php echo esc_attr($ng_gallery->gid); ?>"/>
                                     <?php echo esc_html($ng_gallery->title); ?>
                                     <span style="color:blue;">
-                                    <?php if ( isset($import_settings['galleries'][$ng_gallery->gid]) ) {
+                                    <?php if ( $imported ) {
                                         esc_html_e('Imported', 'modula-importer');
                                     } ?>
                                     </span>

@@ -23,6 +23,7 @@ $envira_galleries = $envira->get_galleries();
                     <td>
 
                         <?php foreach ($envira_galleries as $envira_gallery) {
+                            $imported = ((isset($import_settings['galleries']['envira']) && isset($import_settings['galleries']['envira'][$envira_gallery->ID])) ? true : false);
                             ?>
 
                             <div>
@@ -33,8 +34,8 @@ $envira_galleries = $envira->get_galleries();
                                            value="<?php echo esc_attr($envira_gallery->ID); ?>"/>
                                     <?php echo esc_html($envira_gallery->post_title); ?>
                                     <span style="color:blue;">
-                                    <?php if ( isset($import_settings['galleries'][$envira_gallery->ID]) ) {
-                                        //esc_html_e('Imported', 'modula-importer');
+                                    <?php if ( $imported ) {
+                                        esc_html_e('Imported', 'modula-importer');
                                     } ?>
                                     </span>
                                 </label>

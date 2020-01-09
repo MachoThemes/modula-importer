@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Modula_Nextgen_Importer {
+class Modula_Photoblocks_Importer {
 
     /**
      * Holds the class object.
@@ -23,12 +23,12 @@ class Modula_Nextgen_Importer {
     public function __construct() {
 
         // Add AJAX
-        add_action('wp_ajax_modula_importer_nextgen_gallery_import', array($this, 'nextgen_gallery_import'));
+        add_action('wp_ajax_modula_importer_photoblocks', array($this, 'photoblocks_gallery_import'));
 
     }
 
     /**
-     * Get all NextGEN Galleries
+     * Get all Gallery PhotoBlocks galleries
      *
      * @return mixed
      *
@@ -40,9 +40,9 @@ class Modula_Nextgen_Importer {
 
         // first check if plugin active
         //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('nextgen-gallery/nggallery.php')) {
+        if (is_plugin_active('photoblocks-grid-gallery/photoblocks.php')) {
 
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
+            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "photoblocks");
             if (count($galleries) == 0) {
                 return false;
             }
@@ -54,11 +54,11 @@ class Modula_Nextgen_Importer {
     }
 
     /**
-     * Imports a gallery from NextGEN into Modula
+     * Imports a gallery from PhotoBlocks into Modula
      *
      * @since 1.0.0
      */
-    public function nextgen_gallery_import($gallery_id = '') {
+    public function photoblocks_gallery_import($gallery_id = '') {
 
         global $wpdb;
 
@@ -84,22 +84,28 @@ class Modula_Nextgen_Importer {
 
         }
 
-        // Get image path
-        $sql     = $wpdb->prepare("SELECT path, title, galdesc, pageid 
-    						FROM " . $wpdb->prefix . "ngg_gallery
-    						WHERE gid = %d
-    						LIMIT 1",
+        // Get gallery
+        $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "photoblocks
+    						WHERE id = %d LIMIT 1",
             $gallery_id);
         $gallery = $wpdb->get_row($sql);
 
-        // Get images from NextGEN Gallery
-        $sql = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "ngg_pictures
-    						WHERE galleryid = %d
-    						ORDER BY sortorder ASC,
-    						imagedate ASC",
-            $gallery_id);
+        $gallery_blocks = json_decode($gallery->blocks);
+        $gallery_data   = json_decode($gallery->data);
+        $images         = array();
 
-        $images = $wpdb->get_results($sql);
+        foreach ($gallery_blocks as $block) {
+
+            if (NULL != $block->image->id) {
+
+                $images[] = array(
+                    'id'          => $block->image->id,
+                    'description' => (NULL != $block->caption->description->text) ? $block->caption->description->text : '',
+                    'title'       => (NULL != $block->caption->title->text) ? $block->caption->title->text : '',
+                    'alt'         => (NULL != $block->image->alt) ? $block->image->alt : ''
+                );
+            }
+        }
 
         $attachments = array();
 
@@ -107,8 +113,11 @@ class Modula_Nextgen_Importer {
             // Add each image to Media Library
             foreach ($images as $image) {
 
+                $image_path = get_attached_file($image['id']);
+                $image_name = basename(get_attached_file($image['id']));
+
                 // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($gallery->path, $image->filename, $image->description, $image->alttext);
+                $attachment = $this->add_image_to_library($image_path, $image_name, $image['description'], $image['alt'], $image['title']);
 
                 if ($attachment !== false) {
 
@@ -124,9 +133,6 @@ class Modula_Nextgen_Importer {
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
         $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
-
-        // Get nextgen settings
-        $nextgen_settings = get_option( 'ngg_options', array() );
 
         // Build Modula Gallery modula-images metadata
         $modula_images = array();
@@ -150,8 +156,9 @@ class Modula_Nextgen_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => $gallery->title,
+            'post_title'  => $gallery_data->name,
         ));
+
 
         // Attach meta modula-settings to Modula CPT
         update_post_meta($modula_gallery_id, 'modula-settings', $modula_settings);
@@ -166,15 +173,15 @@ class Modula_Nextgen_Importer {
         }
 
         // Remember that this gallery has been imported
-        $importer_settings['galleries']['nextgen'][$gallery_id] = $modula_gallery_id;
+        $importer_settings['galleries']['photoblocks'][$gallery_id] = $modula_gallery_id;
         update_option('modula_importer', $importer_settings);
 
-        $nextgen_shortcode = '[ngg_images gallery_ids="' . $gallery_id . '"]';
-        $modula_shortcode  = '[modula id="' . $modula_gallery_id . '"]';
+        $ftg_shortcode    = '[photoblocks id=' . $gallery_id . ']';
+        $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
-        // Replace NextGEN shortcode with Modula Shortcode in Posts, Pages and CPTs
+        // Replace Gallery PhotoBlocks shortcode with Modula Shortcode in Posts, Pages and CPTs
         $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
-            $nextgen_shortcode, $modula_shortcode);
+            $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
         $this->modula_import_result(true, __('Imported!', 'modula-importer'));
@@ -187,14 +194,15 @@ class Modula_Nextgen_Importer {
      * @param $source_file
      * @param $description
      * @param $alt
+     * @param $title
      * @return mixed
      *
      * @since 1.0.0
      */
-    public function add_image_to_library($source_path, $source_file, $description, $alt) {
+    public function add_image_to_library($source_path, $source_file, $description, $alt, $title) {
 
         // Get full path and filename
-        $source_file_path = ABSPATH . $source_path . '/' . $source_file;
+        $source_file_path = $source_path;
 
         // Get WP upload dir
         $uploadDir = wp_upload_dir();
@@ -205,7 +213,7 @@ class Modula_Nextgen_Importer {
         $destination_url       = $uploadDir['url'] . '/' . $destination_file;
 
         // Check file is valid
-        $wp_filetype = wp_check_filetype($source_file, null);
+        $wp_filetype = wp_check_filetype($source_path, null);
         extract($wp_filetype);
 
         if ((!$type || !$ext) && !current_user_can('unfiltered_upload')) {
@@ -235,7 +243,7 @@ class Modula_Nextgen_Importer {
         $attachment = array(
             'post_mime_type' => $type,
             'guid'           => $destination_url,
-            'post_title'     => $alt,
+            'post_title'     => $title,
             'post_name'      => $alt,
             'post_content'   => $description,
         );
@@ -258,7 +266,7 @@ class Modula_Nextgen_Importer {
         return array(
             'ID'      => $attachmentID,
             'src'     => $destination_url,
-            'title'   => $alt,
+            'title'   => $title,
             'alt'     => $alt,
             'caption' => $description,
         );
@@ -290,8 +298,8 @@ class Modula_Nextgen_Importer {
      */
     public static function get_instance() {
 
-        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Nextgen_Importer)) {
-            self::$instance = new Modula_Nextgen_Importer();
+        if (!isset(self::$instance) && !(self::$instance instanceof Modula_Photoblocks_Importer)) {
+            self::$instance = new Modula_Photoblocks_Importer();
         }
 
         return self::$instance;
@@ -301,4 +309,4 @@ class Modula_Nextgen_Importer {
 }
 
 // Load the class.
-$modula_nextgen_importer = Modula_Nextgen_Importer::get_instance();
+$modula_photoblocks_importer = Modula_Photoblocks_Importer::get_instance();
