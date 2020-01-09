@@ -1,106 +1,103 @@
-jQuery(document).ready(function ($) {
+( function( $ ){
+    "use strict";
 
-    $('form#modula_importer_envira').submit(function (e) {
-        e.preventDefault();
+    var modulaEnviraImporter = {
+        counts: 0,
+        completed: 0,
+        ajaxRequests: [],
+        ajaxStarted: 0,
+        ajaxTimeout: null,
 
-        // Check if gallery was selected
-        var galleries = $('input[name=gallery]:checked');
-        if (0 == galleries.length) {
-            alert(modula_envira_importer_settings.empty_gallery_selection);
-            return false;
-        }
 
-        // Disable input
-        $('form#modula_importer_envira :input').prop('disabled', true);
+        init: function(){
 
-        // Get array of IDs
-        var curIndex = -1;
-        var id_array = [];
-        $(galleries).each(function (i) {
-            id_array[i] = $(this).val();
-        });
+            $('form#modula_importer_envira').submit(function (e) {
+                e.preventDefault();
 
-        import_gallery_envira(id_array, curIndex);
+                // Check if gallery was selected
+                var galleries = $('input[name=gallery]:checked');
+                if (0 == galleries.length) {
+                    alert(modula_envira_importer_settings.empty_gallery_selection);
+                    return false;
+                }
+
+                // Disable input
+                $('form#modula_importer_envira :input').prop('disabled', true);
+
+                // Get array of IDs
+                var id_array = [];
+                $(galleries).each(function (i) {
+                    id_array[i] = $(this).val();
+                });
+
+                modulaEnviraImporter.counts = id_array.length + 1;
+                modulaEnviraImporter.processAjax( id_array );
+
+            });
+
+        },
+
+        processAjax: function( galleries_ids ){
+            galleries_ids.forEach( function( gallery_id ){
+                
+                var opts = {
+                    url:      ajaxurl,
+                    type:     'post',
+                    async:    true,
+                    cache:    false,
+                    dataType: 'json',
+                    data: {
+                        action: 'modula_importer_envira_gallery_import',
+                        id: gallery_id,
+                        nonce: modula_envira_importer_settings.nonce
+                    },
+                    success: function( response ) {
+                        if ( ! response.success ) {
+                            return;
+                        }
+
+                        modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;
+                        var status = $('form#modula_importer_envira label[data-id=' + gallery_id + ']');
+
+                        // Display result from AJAX call
+                        status.find('span').text(response.message);
+
+                        // Remove one ajax from queue
+                        modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted - 1;
+                    }
+                };
+                modulaEnviraImporter.ajaxRequests.push( opts );
+                // $.ajax(opts);
+
+            });
+            modulaEnviraImporter.runAjaxs();
+        },
+
+        runAjaxs: function() {
+            var currentAjax;
+
+            while( modulaEnviraImporter.ajaxStarted < 5 && modulaEnviraImporter.ajaxRequests.length > 0 ) {
+                modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted + 1;
+                currentAjax = modulaEnviraImporter.ajaxRequests.shift();
+                $.ajax( currentAjax );
+
+            }
+
+            if ( modulaEnviraImporter.ajaxRequests.length > 0 ) {
+                modulaEnviraImporter.ajaxTimeout = setTimeout(function() {
+                    console.log( 'Delayed 1s' );
+                    modulaEnviraImporter.runAjaxs();
+                }, 1000);
+            }else{
+                $('form#modula_importer_envira :input').prop('disabled', false);
+            }
+
+        },
+
+    };
+
+    $( document ).ready(function(){
+        modulaEnviraImporter.init();
     });
 
-
-    /**
-     * Imports Envira gallery
-     *
-     * @param id_array
-     * @param curIndex
-     */
-    var import_gallery_envira = function (id_array, curIndex) {
-
-        curIndex++;
-
-        // Check if end of array
-        if (id_array.length == curIndex) {
-
-            $('form#modula_importer_envira :input').prop('disabled', false);
-            return;
-        }
-
-        ajax_request_envira(id_array, curIndex);
-    }
-
-    /**
-     * Performs an AJAX request to import envira gallery
-     *
-     * @param id_array
-     * @param curIndex
-     */
-    var ajax_request_envira = function (id_array, curIndex) {
-
-        // Get ID and status label on form
-        var id = id_array[curIndex];
-        var status = $('form#modula_importer_envira label[data-id=' + id + ']');
-
-        $(status).removeClass().addClass('importing');
-        $('span', $(status)).html(modula_envira_importer_settings.importing);
-
-        // Do request
-        $.ajax({
-            url: modula_envira_importer_settings.ajax,
-            type: 'post',
-            async: true,
-            cache: false,
-            dataType: 'json',
-            data: {
-                action: 'modula_importer_envira_gallery_import',
-                id: id,
-                nonce: modula_envira_importer_settings.nonce
-            },
-            success: function (response) {
-                status_update_envira(id_array, curIndex, response.success, response.message);
-                import_gallery_envira(id_array, curIndex);
-                return;
-            },
-            error: function (xhr, textStatus, e) {
-                status_update_envira(id_array, curIndex, false, textStatus);
-                import_gallery_envira(id_array, curIndex);
-                return;
-            }
-        });
-    }
-
-    /**
-     * Update the status of the import when completed
-     *
-     * @param id_array
-     * @param curIndex
-     * @param result
-     * @param message
-     */
-    var status_update_envira = function (id_array, curIndex, result, message) {
-
-        var id = id_array[curIndex];
-        var status = $('form#modula_importer_envira label[data-id=' + id + ']');
-
-        $(status).removeClass().addClass((result ? 'gallery has been imported' : 'it appears there has been an error'));
-
-        // Display result from AJAX call
-        $('span', $(status)).text(message);
-    }
-
-});
+})( jQuery );

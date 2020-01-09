@@ -125,6 +125,9 @@ class Modula_Nextgen_Importer {
         // Get Modula Gallery defaults, used to set modula-settings metadata
         $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
 
+        // Get nextgen settings
+        $nextgen_settings = get_option( 'ngg_options', array() );
+
         // Build Modula Gallery modula-images metadata
         $modula_images = array();
         foreach ($attachments as $attachment) {

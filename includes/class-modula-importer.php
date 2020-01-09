@@ -163,8 +163,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => __('Please choose at least one NextGEN Gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one NextGEN Gallery to import.', 'modula-importer'),
                     )
                 );
             }
@@ -182,8 +182,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . __('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => __('Please choose at least one Envira Gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one Envira Gallery to import.', 'modula-importer'),
                     )
                 );
             }

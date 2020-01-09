@@ -12,7 +12,8 @@ $envira_galleries = $envira->get_galleries();
         <table class="form-table">
             <tbody>
             <?php if ('inactive' != $envira_galleries && false != $envira_galleries) {
-                $import_settings = get_option('modula_importer');
+                $import_settings = get_option( 'modula_importer' );
+                $import_settings = wp_parse_args( $import_settings, array( 'galleries' => array() ) );
                 ?>
                 <!-- If Envira gallery plugin is installed and active and there are galleries created -->
                 <tr valign="top">
@@ -33,10 +34,11 @@ $envira_galleries = $envira->get_galleries();
                                            value="<?php echo esc_attr($envira_gallery->ID); ?>"/>
                                     <?php echo esc_html($envira_gallery->post_title); ?>
                                     <span style="color:blue;">
-                                    <?php if ($imported) {
+                                    <?php if ( $imported ) {
                                         esc_html_e('Imported', 'modula-importer');
                                     } ?>
-                                </span>
+                                    </span>
+                                </label>
                             </div>
 
                         <?php } ?>
