@@ -107,50 +107,34 @@ class Modula_Photoblocks_Importer {
             }
         }
 
-        $attachments = array();
-
+        // Build Modula Gallery modula-images metadata
+        $modula_images = array();
         if (is_array($images) && count($images) > 0) {
             // Add each image to Media Library
             foreach ($images as $image) {
-
-                $image_path = get_attached_file($image['id']);
-                $image_name = basename(get_attached_file($image['id']));
-
-                // Store image in WordPress Media Library
-                $attachment = $this->add_image_to_library($image_path, $image_name, $image['description'], $image['alt'], $image['title']);
-
-                if ($attachment !== false) {
-
-                    // Add to array of attachments
-                    $attachments[] = $attachment;
-                }
+                $image_src = wp_get_attachment_image_src($image['id'],'full');
+                $modula_images[] = array(
+                    'id'          => $image['id'],
+                    'alt'         => $image['alt'],
+                    'title'       => $image['title'],
+                    'description' => $image['description'],
+                    'halign'      => 'center',
+                    'valign'      => 'middle',
+                    'link'        => $image_src[0],
+                    'target'      => '',
+                    'width'       => 2,
+                    'height'      => 2,
+                    'filters'     => ''
+                );
             }
         }
 
-        if (count($attachments) == 0) {
+        if (count($modula_images) == 0) {
             $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
         $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
-
-        // Build Modula Gallery modula-images metadata
-        $modula_images = array();
-        foreach ($attachments as $attachment) {
-            $modula_images[] = array(
-                'id'          => $attachment['ID'],
-                'alt'         => $attachment['alt'],
-                'title'       => $attachment['title'],
-                'description' => $attachment['caption'],
-                'halign'      => 'center',
-                'valign'      => 'middle',
-                'link'        => $attachment['src'],
-                'target'      => '',
-                'width'       => 2,
-                'height'      => 2,
-                'filters'     => ''
-            );
-        }
 
         // Create Modula CPT
         $modula_gallery_id = wp_insert_post(array(
@@ -185,92 +169,6 @@ class Modula_Photoblocks_Importer {
         $wpdb->query($sql);
 
         $this->modula_import_result(true, __('Imported!', 'modula-importer'));
-    }
-
-    /**
-     * Add image to library
-     *
-     * @param $source_path
-     * @param $source_file
-     * @param $description
-     * @param $alt
-     * @param $title
-     * @return mixed
-     *
-     * @since 1.0.0
-     */
-    public function add_image_to_library($source_path, $source_file, $description, $alt, $title) {
-
-        // Get full path and filename
-        $source_file_path = $source_path;
-
-        // Get WP upload dir
-        $uploadDir = wp_upload_dir();
-
-        // Create destination file paths and URLs
-        $destination_file      = wp_unique_filename($uploadDir['path'], $source_file);
-        $destination_file_path = $uploadDir['path'] . '/' . $destination_file;
-        $destination_url       = $uploadDir['url'] . '/' . $destination_file;
-
-        // Check file is valid
-        $wp_filetype = wp_check_filetype($source_path, null);
-        extract($wp_filetype);
-
-        if ((!$type || !$ext) && !current_user_can('unfiltered_upload')) {
-            return false;
-        }
-
-        $result = copy($source_file_path, $destination_file_path);
-
-        if (!$result) {
-
-            return false;
-        }
-
-        // Set file permissions
-        $stat  = stat($destination_file_path);
-        $perms = $stat['mode'] & 0000666;
-        chmod($destination_file_path, $perms);
-
-        // Apply upload filters
-        $return = apply_filters('wp_handle_upload', array(
-            'file' => $destination_file_path,
-            'url'  => $destination_url,
-            'type' => $type,
-        ));
-
-        // Construct the attachment array
-        $attachment = array(
-            'post_mime_type' => $type,
-            'guid'           => $destination_url,
-            'post_title'     => $title,
-            'post_name'      => $alt,
-            'post_content'   => $description,
-        );
-
-        // Save as attachment
-        $attachmentID = wp_insert_attachment($attachment, $destination_file_path);
-
-        // Update attachment metadata
-        if (!is_wp_error($attachmentID)) {
-            $metadata = wp_generate_attachment_metadata($attachmentID, $destination_file_path);
-            wp_update_attachment_metadata($attachmentID, wp_generate_attachment_metadata($attachmentID, $destination_file_path));
-        }
-
-        update_post_meta($attachmentID, '_wp_attachment_image_alt', $alt);
-        $attachment               = get_post($attachmentID);
-        $attachment->post_excerpt = $description;
-        wp_update_post($attachment);
-
-        // Return attachment data
-        return array(
-            'ID'      => $attachmentID,
-            'src'     => $destination_url,
-            'title'   => $title,
-            'alt'     => $alt,
-            'caption' => $description,
-        );
-
     }
 
 
