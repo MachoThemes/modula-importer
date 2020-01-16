@@ -12,7 +12,7 @@ $nextgen_galleries = $nextgen->get_galleries();
 
         <table class="form-table">
             <tbody>
-            <?php if ('inactive' != $nextgen_galleries && false != $nextgen_galleries) {
+            <?php if (false != $nextgen_galleries) {
                 $import_settings = get_option( 'modula_importer' );
                 $import_settings = wp_parse_args( $import_settings, array( 'galleries' => array() ) );
                 ?>
@@ -53,20 +53,13 @@ $nextgen_galleries = $nextgen->get_galleries();
                     </td>
                 </tr>
             <?php } else if (false == $nextgen_galleries) { ?>
-                <!-- If NextGEN gallery plugin is installed and active but there are no galleries created -->
+                <!-- If NextGEN gallery plugin there are no galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('There are no NextGEN galleries', 'modula-importer'); ?>
                     </th>
                 </tr>
-            <?php } else { ?>
-                <!-- If NextGEN gallery plugin is not installed or is inactive -->
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                        <?php esc_html_e('NextGEN plugin is not active', 'modula-importer'); ?>
-                    </th>
-                </tr>
-            <?php } ?>
+            <?php  } ?>
             </tbody>
         </table>
     </form>

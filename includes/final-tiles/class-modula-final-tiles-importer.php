@@ -38,19 +38,12 @@ class Modula_Final_Tiles_Importer {
 
         global $wpdb;
 
-        // first check if plugin active ( LITE only for the moment )
-        //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('final-tiles-grid-gallery-lite/FinalTilesGalleryLite.php')) {
-
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
-            if (count($galleries) == 0) {
-                return false;
-            }
-
+        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
+        if (count($galleries) != 0) {
             return $galleries;
         }
 
-        return 'inactive';
+        return false;
     }
 
     /**

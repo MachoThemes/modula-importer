@@ -38,19 +38,12 @@ class Modula_Nextgen_Importer {
 
         global $wpdb;
 
-        // first check if plugin active
-        //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('nextgen-gallery/nggallery.php')) {
-
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
-            if (count($galleries) == 0) {
-                return false;
-            }
-
+        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
+        if (count($galleries) != 0) {
             return $galleries;
         }
 
-        return 'inactive';
+        return false;
     }
 
     /**

@@ -38,19 +38,12 @@ class Modula_Photoblocks_Importer {
 
         global $wpdb;
 
-        // first check if plugin active
-        //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('photoblocks-grid-gallery/photoblocks.php')) {
-
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "photoblocks");
-            if (count($galleries) == 0) {
-                return false;
-            }
-
+        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "photoblocks");
+        if (count($galleries) != 0) {
             return $galleries;
         }
 
-        return 'inactive';
+        return false;
     }
 
     /**

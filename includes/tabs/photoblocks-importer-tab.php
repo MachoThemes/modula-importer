@@ -11,7 +11,7 @@ $photoblocks_galleries = $photoblocks->get_galleries();
 
         <table class="form-table">
             <tbody>
-            <?php if ('inactive' != $photoblocks_galleries && false != $photoblocks_galleries) {
+            <?php if (false != $photoblocks_galleries) {
                 $import_settings = get_option('modula_importer');
                 ?>
                 <!-- If Gallery PhotoBlocks plugin is installed and active and there are galleries created -->
@@ -54,20 +54,13 @@ $photoblocks_galleries = $photoblocks->get_galleries();
                     </td>
                 </tr>
             <?php } else if (false == $photoblocks_galleries) { ?>
-                <!-- If Gallery PhotoBlocks plugin is installed and active but there are no galleries created -->
+                <!-- If Gallery PhotoBlocks plugin there are no galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('There are no PhotoBlocks galleries', 'modula-importer'); ?>
                     </th>
                 </tr>
-            <?php } else { ?>
-                <!-- If Gallery PhotoBlocks plugin is not installed or is inactive -->
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                        <?php esc_html_e('Gallery PhotoBlocks plugin is not active', 'modula-importer'); ?>
-                    </th>
-                </tr>
-            <?php } ?>
+            <?php  } ?>
             </tbody>
         </table>
     </form>

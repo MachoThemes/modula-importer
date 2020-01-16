@@ -11,7 +11,7 @@ $final_tiles_galleries = $final_tiles->get_galleries();
 
         <table class="form-table">
             <tbody>
-            <?php if ('inactive' != $final_tiles_galleries && false != $final_tiles_galleries) {
+            <?php if (false != $final_tiles_galleries) {
                 $import_settings = get_option('modula_importer');
                 ?>
                 <!-- If Final Tiles gallery plugin is installed and active and there are galleries created -->
@@ -54,17 +54,10 @@ $final_tiles_galleries = $final_tiles->get_galleries();
                     </td>
                 </tr>
             <?php } else if (false == $final_tiles_galleries) { ?>
-                <!-- If Final Tiles gallery plugin is installed and active but there are no galleries created -->
+                <!-- If Final Tiles gallery plugin there are no galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('There are no Final Tiles Grid galleries', 'modula-importer'); ?>
-                    </th>
-                </tr>
-            <?php } else { ?>
-                <!-- If Final Tiles gallery plugin is not installed or is inactive -->
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                        <?php esc_html_e('Final Tiles Grid Gallery plugin is not active', 'modula-importer'); ?>
                     </th>
                 </tr>
             <?php } ?>

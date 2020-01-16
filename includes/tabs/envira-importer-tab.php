@@ -11,7 +11,7 @@ $envira_galleries = $envira->get_galleries();
 
         <table class="form-table">
             <tbody>
-            <?php if ('inactive' != $envira_galleries && false != $envira_galleries) {
+            <?php if ( false != $envira_galleries ) {
                 $import_settings = get_option( 'modula_importer' );
                 $import_settings = wp_parse_args( $import_settings, array( 'galleries' => array() ) );
                 ?>
@@ -55,17 +55,10 @@ $envira_galleries = $envira->get_galleries();
                     </td>
                 </tr>
             <?php } else if (false == $envira_galleries) { ?>
-                <!-- If Envira gallery plugin is installed and active but there are no galleries created -->
+                <!-- If Envira gallery there are no galleries created -->
                 <tr valign="top">
                     <th scope="row" valign="top">
                         <?php esc_html_e('There are no Envira galleries', 'modula-importer'); ?>
-                    </th>
-                </tr>
-            <?php } else { ?>
-                <!-- If Envira gallery plugin is not installed or is inactive -->
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                        <?php esc_html_e('Envira Gallery plugin is not active', 'modula-importer'); ?>
                     </th>
                 </tr>
             <?php } ?>

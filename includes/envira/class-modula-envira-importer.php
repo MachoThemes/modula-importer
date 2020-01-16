@@ -38,19 +38,13 @@ class Modula_Envira_Importer {
 
         global $wpdb;
 
-        // first check if plugin is active ( pro or lite version )
-        //@TODO check if remnants are available and not if plugin is active
-        if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
+        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
 
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
-            if (count($galleries) == 0) {
-                return false;
-            }
-
+        if (count($galleries) != 0) {
             return $galleries;
         }
 
-        return 'inactive';
+        return false;
     }
 
     /**
@@ -89,9 +83,9 @@ class Modula_Envira_Importer {
 
         // get gallery data so we can get title, description and alt from envira
         $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
-        if ( isset( $envira_gallery_data['gallery'] ) && count( $envira_gallery_data['gallery'] ) > 0 ) {
-            foreach ( $envira_gallery_data['gallery'] as $imageID => $image ) {
-                
+        if (isset($envira_gallery_data['gallery']) && count($envira_gallery_data['gallery']) > 0) {
+            foreach ($envira_gallery_data['gallery'] as $imageID => $image) {
+
                 $envira_image_title = (!isset($image['title']) || '' != $image['title']) ? $image['title'] : '';
 
                 $envira_image_caption = (!isset($image['caption']) || '' != $image['caption']) ? $image['caption'] : wp_get_attachment_caption($imageID);
