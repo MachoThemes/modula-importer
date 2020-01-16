@@ -102,8 +102,9 @@ class Modula_Photoblocks_Importer {
                     'id'          => $block->image->id,
                     'description' => (NULL != $block->caption->description->text) ? $block->caption->description->text : '',
                     'title'       => (NULL != $block->caption->title->text) ? $block->caption->title->text : '',
-                    'alt'         => (NULL != $block->image->alt) ? $block->image->alt : ''
-                );
+                    'alt'         => (NULL != $block->image->alt) ? $block->image->alt : '',
+                    'link'        => (NULL != $block->click->link) ? $block->click->link : ''
+            );
             }
         }
 
@@ -120,7 +121,7 @@ class Modula_Photoblocks_Importer {
                     'description' => $image['description'],
                     'halign'      => 'center',
                     'valign'      => 'middle',
-                    'link'        => $image_src[0],
+                    'link'        => $image['link'],
                     'target'      => '',
                     'width'       => 2,
                     'height'      => 2,

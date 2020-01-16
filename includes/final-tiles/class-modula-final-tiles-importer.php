@@ -112,7 +112,7 @@ class Modula_Final_Tiles_Importer {
                     'description' => $image->description,
                     'halign'      => 'center',
                     'valign'      => 'middle',
-                    'link'        => $image->imagePath,
+                    'link'        => $image->link,
                     'target'      => '',
                     'width'       => 2,
                     'height'      => 2,
