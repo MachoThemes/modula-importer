@@ -37,6 +37,9 @@ class Modula_Final_Tiles_Importer {
     public function get_galleries() {
 
         global $wpdb;
+        if(!$wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."finaltiles_gallery'")){
+            return false;
+        }
 
         $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
         if (count($galleries) != 0) {

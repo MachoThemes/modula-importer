@@ -37,6 +37,9 @@ class Modula_Nextgen_Importer {
     public function get_galleries() {
 
         global $wpdb;
+        if(!$wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix . "ngg_gallery'")){
+            return false;
+        }
 
         $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
         if (count($galleries) != 0) {

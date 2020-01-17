@@ -38,6 +38,9 @@ class Modula_Photoblocks_Importer {
 
         global $wpdb;
 
+        if(!$wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix . "photoblocks'")){
+            return false;
+        }
         $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "photoblocks");
         if (count($galleries) != 0) {
             return $galleries;
