@@ -44,35 +44,11 @@ class Modula_Importer {
         // Load the plugin textdomain.
         add_action('plugins_loaded', array($this, 'load_plugin_textdomain'));
 
-        // Add Importer tab for NextGEN
-        add_filter('modula_admin_page_tabs', array($this, 'add_nextgen_importer_tab'));
+        // Add Importer Tab
+        add_filter('modula_admin_page_tabs', array($this, 'add_importer_tab'));
 
-        // Add Importer tab for Envira
-        add_filter('modula_admin_page_tabs', array($this, 'add_envira_importer_tab'));
-
-        // Add Importer tab for Final Tiles Grid gallery
-        add_filter('modula_admin_page_tabs', array($this, 'add_final_tiles_importer_tab'));
-
-        // Add Importer tab for Final Tiles Grid gallery
-        add_filter('modula_admin_page_tabs', array($this, 'add_photoblocks_importer_tab'));
-
-        // Add Importer tab for WP Core gallery
-        add_filter('modula_admin_page_tabs', array($this, 'add_wp_core_importer_tab'));
-
-        // Render Importer tab for NextGEN
-        add_action('modula_admin_tab_import_nextgen', array($this, 'render_nextgen_importer_tab'));
-
-        // Render Importer tab for Envira
-        add_action('modula_admin_tab_import_envira', array($this, 'render_envira_importer_tab'));
-
-        // Render Importer tab for Final Tiles Grid gallery
-        add_action('modula_admin_tab_import_final_tiles', array($this, 'render_final_tiles_importer_tab'));
-
-        // Render Importer tab for Gallery Photoblocks
-        add_action('modula_admin_tab_import_photoblocks', array($this, 'render_photoblocks_importer_tab'));
-
-        // Render Importer tab for WP Core gallery
-        add_action('modula_admin_tab_import_wp_core', array($this, 'render_wp_core_importer_tab'));
+       // Render Importer tab
+        add_action('modula_admin_tab_importer', array($this, 'render_importer_tab'));
 
         // Include required scripts for import
         add_action('admin_enqueue_scripts', array($this, 'admin_importer_scripts'));
@@ -145,11 +121,12 @@ class Modula_Importer {
 
         $screen = get_current_screen();
 
-        // only enqueue script if we are in Modula Settings page
-        if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base) {
+        // only enqueue script if we are in Modula Settings page on modula importer tab
+        if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base && isset($_GET['modula-tab']) && 'importer' == $_GET['modula-tab']) {
 
             $ajax_url = admin_url('admin-ajax.php');
             $nonce = wp_create_nonce('modula-importer');
+
             // only enqueue if nextGEN gallery plugin is active
             if (is_plugin_active('nextgen-gallery/nggallery.php')) {
                 // scripts required for nextGEN importer
@@ -244,155 +221,38 @@ class Modula_Importer {
         }
     }
 
+
     /**
-     * Add NextGEN Gallery Importer tab
+     * Add Importer tab
      *
      * @param $tabs
      * @return mixed
      *
      * @since 1.0.0
      */
-    public function add_nextgen_importer_tab($tabs) {
-        //if(is_plugin_active('modula-pro/Modula.php') ) {
-            $tabs['import_nextgen'] = array(
-                'label'    => esc_html__('Import NextGEN galleries', 'modula-importer'),
+    public function add_importer_tab($tabs) {
+        if (class_exists('Modula_PRO')) {
+            $tabs['importer'] = array(
+                'label'    => esc_html__('Import galleries', 'modula-importer'),
                 'priority' => 50,
             );
-       // }
+        }
 
         return $tabs;
     }
 
+
     /**
-     * Add Envira Gallery Importer tab
-     *
-     * @param $tabs
-     * @return mixed
+     * Render Importer tab
      *
      * @since 1.0.0
      */
-    public function add_envira_importer_tab($tabs) {
-        //if (is_plugin_active('modula-pro/Modula.php')) {
-            $tabs['import_envira'] = array(
-                'label'    => esc_html__('Import Envira galleries', 'modula-importer'),
-                'priority' => 50,
-            );
-       // }
-
-        return $tabs;
+    public function render_importer_tab() {
+        if (class_exists('Modula_PRO')) {
+            include 'tabs/modula-importer-tab.php';
+        }
     }
 
-    /**
-     * Add Final Tiles Grid Gallery Importer tab
-     *
-     * @param $tabs
-     * @return mixed
-     *
-     * @since 1.0.0
-     */
-    public function add_final_tiles_importer_tab($tabs) {
-        //if (is_plugin_active('modula-pro/Modula.php')) {
-            $tabs['import_final_tiles'] = array(
-                'label'    => esc_html__('Import Final Tiles Grid galleries', 'modula-importer'),
-                'priority' => 60,
-            );
-       // }
-
-        return $tabs;
-    }
-
-    /**
-     * Add Gallery PhotoBlocks Importer tab
-     *
-     * @param $tabs
-     * @return mixed
-     *
-     * @since 1.0.0
-     */
-    public function add_photoblocks_importer_tab($tabs) {
-        //if (is_plugin_active('modula-pro/Modula.php')) {
-            $tabs['import_photoblocks'] = array(
-                'label'    => esc_html__('Import Gallery PhotoBlocks galleries', 'modula-importer'),
-                'priority' => 60,
-            );
-       // }
-
-        return $tabs;
-    }
-
-    /**
-     * Add WP Core Galleries Importer tab
-     *
-     * @param $tabs
-     * @return mixed
-     *
-     * @since 1.0.0
-     */
-    public function add_wp_core_importer_tab($tabs) {
-       // if (is_plugin_active('modula-pro/Modula.php')) {
-            $tabs['import_wp_core'] = array(
-                'label'    => esc_html__('WP Core galleries', 'modula-importer'),
-                'priority' => 60,
-            );
-       // }
-
-        return $tabs;
-    }
-
-    /**
-     * Render Importer tab for NextGEN
-     *
-     * @since 1.0.0
-     */
-    public function render_nextgen_importer_tab() {
-       // if(is_plugin_active('modula-pro/Modula.php') ) {
-            include 'tabs/nextgen-importer-tab.php';
-       // }
-    }
-
-    /**
-     * Render Importer tab for Envira
-     *
-     * @since 1.0.0
-     */
-    public function render_envira_importer_tab() {
-        //if(is_plugin_active('modula-pro/Modula.php') ) {
-            include 'tabs/envira-importer-tab.php';
-      //  }
-    }
-
-    /**
-     * Render Importer tab for Final Tiles Grid gallery
-     *
-     * @since 1.0.0
-     */
-    public function render_final_tiles_importer_tab() {
-       // if(is_plugin_active('modula-pro/Modula.php') ) {
-            include 'tabs/final-tiles-importer-tab.php';
-       // }
-    }
-
-    /**
-     * Render Importer tab for Gallery PhotoBlocks
-     *
-     * @since 1.0.0
-     */
-    public function render_photoblocks_importer_tab() {
-        //if(is_plugin_active('modula-pro/Modula.php') ) {
-            include 'tabs/photoblocks-importer-tab.php';
-       // }
-    }
-
-    /**
-     * Render Importer tab for WP Core galleries
-     *
-     * @since 1.0.0
-     */
-    public function render_wp_core_importer_tab() {
-        //if(is_plugin_active('modula-pro/Modula.php') ) {
-            include 'tabs/wp-core-importer-tab.php';
-       // }
-    }
 
     /**
      * Returns the singleton instance of the class.
