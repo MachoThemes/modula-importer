@@ -38,8 +38,14 @@
         },
 
         processAjax: function( galleries_ids ){
+
             galleries_ids.forEach( function( gallery_id ){
-                
+
+                var status = $('form#modula_importer_envira label[data-id=' + gallery_id + ']');
+
+                $(status).removeClass().addClass('importing');
+                $('span', $(status)).html(modula_envira_importer_settings.importing);
+
                 var opts = {
                     url:      ajaxurl,
                     type:     'post',
@@ -57,7 +63,6 @@
                         }
 
                         modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;
-                        var status = $('form#modula_importer_envira label[data-id=' + gallery_id + ']');
 
                         // Display result from AJAX call
                         status.find('span').text(response.message);

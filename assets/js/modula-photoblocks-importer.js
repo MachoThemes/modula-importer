@@ -1,106 +1,108 @@
-jQuery(document).ready(function ($) {
+( function( $ ){
+    "use strict";
 
-    $('form#modula_importer_photoblocks').submit(function (e) {
-        e.preventDefault();
+    var modulaPhotoblocksImporter = {
+        counts: 0,
+        completed: 0,
+        ajaxRequests: [],
+        ajaxStarted: 0,
+        ajaxTimeout: null,
 
-        // Check if gallery was selected
-        var galleries = $('input[name=gallery]:checked');
-        if (0 == galleries.length) {
-            alert(modula_pb_importer_settings.empty_gallery_selection);
-            return false;
-        }
 
-        // Disable input
-        $('form#modula_importer_photoblocks :input').prop('disabled', true);
+        init: function(){
 
-        // Get array of IDs
-        var curIndex = -1;
-        var id_array = [];
-        $(galleries).each(function (i) {
-            id_array[i] = $(this).val();
-        });
+            $('form#modula_importer_photoblocks').submit(function (e) {
+                e.preventDefault();
 
-        import_gallery(id_array, curIndex);
+                // Check if gallery was selected
+                var galleries = $('input[name=gallery]:checked');
+                if (0 == galleries.length) {
+                    alert(modula_pb_importer_settings.empty_gallery_selection);
+                    return false;
+                }
+
+                // Disable input
+                $('form#modula_importer_photoblocks :input').prop('disabled', true);
+
+                // Get array of IDs
+                var id_array = [];
+                $(galleries).each(function (i) {
+                    id_array[i] = $(this).val();
+                });
+
+                modulaPhotoblocksImporter.counts = id_array.length + 1;
+                modulaPhotoblocksImporter.processAjax( id_array );
+
+            });
+
+        },
+
+        processAjax: function( galleries_ids ){
+
+            galleries_ids.forEach( function( gallery_id ){
+
+                var status = $('form#modula_importer_photoblocks label[data-id=' + gallery_id + ']');
+
+                $(status).removeClass().addClass('importing');
+                $('span', $(status)).html(modula_pb_importer_settings.importing);
+
+                var opts = {
+                    url:      ajaxurl,
+                    type:     'post',
+                    async:    true,
+                    cache:    false,
+                    dataType: 'json',
+                    data: {
+                        action: 'modula_importer_photoblocks',
+                        id: gallery_id,
+                        nonce: modula_pb_importer_settings.nonce
+                    },
+                    success: function( response ) {
+                        if ( ! response.success ) {
+                            return;
+                        }
+
+                        modulaPhotoblocksImporter.completed = modulaPhotoblocksImporter.completed + 1;
+
+                        // Display result from AJAX call
+                        status.find('span').text(response.message);
+
+                        // Remove one ajax from queue
+                        modulaPhotoblocksImporter.ajaxStarted = modulaPhotoblocksImporter.ajaxStarted - 1;
+                    }
+                };
+                modulaPhotoblocksImporter.ajaxRequests.push( opts );
+                // $.ajax(opts);
+
+            });
+            modulaPhotoblocksImporter.runAjaxs();
+        },
+
+        runAjaxs: function() {
+            var currentAjax;
+
+            while( modulaPhotoblocksImporter.ajaxStarted < 5 && modulaPhotoblocksImporter.ajaxRequests.length > 0 ) {
+                modulaPhotoblocksImporter.ajaxStarted = modulaPhotoblocksImporter.ajaxStarted + 1;
+                currentAjax = modulaPhotoblocksImporter.ajaxRequests.shift();
+                $.ajax( currentAjax );
+
+            }
+
+            if ( modulaPhotoblocksImporter.ajaxRequests.length > 0 ) {
+                modulaPhotoblocksImporter.ajaxTimeout = setTimeout(function() {
+                    console.log( 'Delayed 1s' );
+                    modulaPhotoblocksImporter.runAjaxs();
+                }, 1000);
+            }else{
+                $('form#modula_importer_photoblocks :input').prop('disabled', false);
+            }
+
+        },
+
+    };
+
+    $( document ).ready(function(){
+        modulaPhotoblocksImporter.init();
     });
 
-
-    /**
-     * Imports Gallery PhotoBlocks gallery
-     *
-     * @param id_array
-     * @param curIndex
-     */
-    var import_gallery = function (id_array, curIndex) {
-
-        curIndex++;
-
-        // Check if end of array
-        if (id_array.length == curIndex) {
-
-            $('form#modula_importer_photoblocks :input').prop('disabled', false);
-            return;
-        }
-
-        ajax_request(id_array, curIndex);
-    };
-
-    /**
-     * Performs an AJAX request to import a gallery
-     *
-     * @param id_array
-     * @param curIndex
-     */
-    var ajax_request = function (id_array, curIndex) {
-
-        // Get ID and status label on form
-        var id = id_array[curIndex];
-        var status = $('form#modula_importer_photoblocks label[data-id=' + id + ']');
-
-        $(status).removeClass().addClass('importing');
-        $('span', $(status)).html(modula_pb_importer_settings.importing);
-
-        // Do request
-        $.ajax({
-            url: modula_pb_importer_settings.ajax,
-            type: 'post',
-            async: true,
-            cache: false,
-            dataType: 'json',
-            data: {
-                action: 'modula_importer_photoblocks',
-                id: id,
-                nonce: modula_pb_importer_settings.nonce
-            },
-            success: function (response) {
-                status_update(id_array, curIndex, response.success, response.message);
-                import_gallery(id_array, curIndex);
-                return;
-            },
-            error: function (xhr, textStatus, e) {
-                status_update(id_array, curIndex, false, textStatus);
-                import_gallery(id_array, curIndex);
-                return;
-            }
-        });
-    };
-
-    /**
-     * Update the status of the import when completed
-     *
-     * @param id_array
-     * @param curIndex
-     * @param result
-     * @param message
-     */
-    var status_update = function (id_array, curIndex, result, message) {
-
-        var id = id_array[curIndex];
-        var status = $('form#modula_importer_photoblocks label[data-id=' + id + ']');
-
-        $(status).removeClass().addClass((result ? 'gallery has been imported' : 'it appears there has been an error'));
-
-        // Display result from AJAX call
-        $('span', $(status)).text(message);
-    };
-
-});
+})( jQuery );

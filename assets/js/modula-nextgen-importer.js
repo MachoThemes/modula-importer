@@ -39,7 +39,11 @@
 
         processAjax: function( galleries_ids ){
             galleries_ids.forEach( function( gallery_id ){
-                
+
+                var status = $('form#modula_importer_nextgen label[data-id=' + gallery_id + ']');
+                $(status).removeClass().addClass('importing');
+                $('span', $(status)).html(modula_nextgen_importer_settings.importing);
+
                 var opts = {
                     url:      ajaxurl,
                     type:     'post',
@@ -57,7 +61,6 @@
                         }
 
                         modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;
-                        var status = $('form#modula_importer_nextgen label[data-id=' + gallery_id + ']');
 
                         // Display result from AJAX call
                         status.find('span').text(response.message);
