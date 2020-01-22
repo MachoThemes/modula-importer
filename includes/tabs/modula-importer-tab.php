@@ -4,70 +4,100 @@ if (!defined('ABSPATH')) {
     exit;
 }
 ?>
-<style>
-    .modula-importer-row {
-        border-bottom: 2px solid #eee2ec;
-    }
-    .modula-importer-row.hide {
-        display: none;
-    }
-</style>
-<script type="text/javascript">
-    jQuery(document).ready(function($){
-        $('#modula_select_gallery_source').on('change',function(){
-            var targetID = $(this).val();
-            $('#modula-'+targetID+'-importer').removeClass('hide');
-            $('.modula-importer-row').not($('#modula-'+targetID+'-importer')).addClass('hide');
-        });
-    });
-</script>
-<?php
-$import_settings              = get_option('modula_importer');
-$import_settings              = wp_parse_args($import_settings, array('galleries' => array()));
-$def_galleries                = array();
-$sources = array();
-$galleries = array();
+    <style>
+        .modula-importer-row {
+            border-bottom: 2px solid #eee2ec;
+        }
 
-$envira                       = Modula_Envira_Importer::get_instance();
-$envira_galleries             = $envira->get_galleries();
-if($envira_galleries){
-    $def_galleries['envira']      = array(
+        .modula-importer-row.hide {
+            display: none;
+        }
+
+        .modula .hide {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $('#modula_select_gallery_source').on('change', function () {
+                var targetID = $(this).val();
+                $('#modula-' + targetID + '-importer').removeClass('hide');
+                $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
+
+                if ('none' != targetID) {
+                    $('.select-all-wrapper').removeClass('hide');
+                } else {
+                    $('.select-all-wrapper').addClass('hide');
+                }
+
+            });
+
+            $('#select-all').on('change', function () {
+                var checkboxes = $(this).parents('.wrap.modula').find('input[type="checkbox"]').not($(this));
+
+                if ($(this).prop('checked')) {
+                    checkboxes.each(function () {
+                        if ($(this).is(':visible')) {
+                            checkboxes.prop('checked', true);
+                        }
+                    });
+                } else {
+                    checkboxes.each(function () {
+                        if ($(this).is(':visible')) {
+                            checkboxes.prop('checked', false);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+<?php
+$import_settings = get_option('modula_importer');
+$import_settings = wp_parse_args($import_settings, array('galleries' => array()));
+$def_galleries   = array();
+$sources         = array();
+$galleries       = array();
+
+$envira           = Modula_Envira_Importer::get_instance();
+$envira_galleries = $envira->get_galleries();
+if ($envira_galleries) {
+    $def_galleries['envira'] = array(
         'label'     => 'Envira',
         'galleries' => $envira_galleries
     );
 }
 
-$final_tiles                  = Modula_Final_Tiles_Importer::get_instance();
-$final_tiles_galleries        = $final_tiles->get_galleries();
-if($final_tiles_galleries){
+$final_tiles           = Modula_Final_Tiles_Importer::get_instance();
+$final_tiles_galleries = $final_tiles->get_galleries();
+if ($final_tiles_galleries) {
     $def_galleries['final_tiles'] = array(
         'label'     => 'Final Tiles',
         'galleries' => $final_tiles_galleries
     );
 }
 
-$nextgen                      = Modula_Nextgen_Importer::get_instance();
-$nextgen_galleries            = $nextgen->get_galleries();
-if($nextgen_galleries){
-    $def_galleries['nextgen']     = array(
+$nextgen           = Modula_Nextgen_Importer::get_instance();
+$nextgen_galleries = $nextgen->get_galleries();
+if ($nextgen_galleries) {
+    $def_galleries['nextgen'] = array(
         'label'     => 'Nextgen',
         'galleries' => $nextgen_galleries
     );
 }
 
-$photoblocks                  = Modula_Photoblocks_Importer::get_instance();
-$photoblocks_galleries        = $photoblocks->get_galleries();
-if($photoblocks_galleries){
+$photoblocks           = Modula_Photoblocks_Importer::get_instance();
+$photoblocks_galleries = $photoblocks->get_galleries();
+if ($photoblocks_galleries) {
     $def_galleries['photoblocks'] = array(
         'label'     => 'Photoblocks',
         'galleries' => $photoblocks_galleries
     );
 }
 
-$wp_core                      = Modula_WP_Core_Gallery_Importer::get_instance();
-$wp_core_galleries            = $wp_core->get_galleries();
-if($wp_core_galleries){
-    $def_galleries['wp_core']     = array(
+$wp_core           = Modula_WP_Core_Gallery_Importer::get_instance();
+$wp_core_galleries = $wp_core->get_galleries();
+if ($wp_core_galleries) {
+    $def_galleries['wp_core'] = array(
         'label'     => 'WP Core Galleries',
         'galleries' => $wp_core_galleries
     );
@@ -76,40 +106,63 @@ if($wp_core_galleries){
 $galleries = apply_filters('modula_importable_galleries', $def_galleries);
 ?>
 
-<div class="row">
-    <table class="form-table">
-        <tbody>
-        <tr valign="top">
-            <th scope="row" valign="top">
-                <?php esc_html_e('Gallery source', 'modula-importer'); ?>
-                <div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span>
-                    <div class="tab-header-description modula-tooltip-content">
-                        <?php esc_html_e( 'Select from which source would you like to import the gallery.', 'modula-importer' ) ?>
+    <div class="row">
+        <table class="form-table">
+            <tbody>
+            <tr valign="top">
+                <th scope="row" valign="top">
+                    <?php esc_html_e('Gallery source', 'modula-importer'); ?>
+                    <div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span>
+                        <div class="tab-header-description modula-tooltip-content">
+                            <?php esc_html_e('Select from which source would you like to import the gallery.', 'modula-importer') ?>
+                            <?php esc_html_e('Importing galleries will also replace the shortcode of the gallery with the new Modula shortcode in pages and posts.', 'modula-importer') ?>
+                        </div>
                     </div>
-                </div>
-            </th>
-            <td>
-                <select name="modula_select_gallery_source" id="modula_select_gallery_source">
-                    <option value="none"><?php echo (count($galleries) > 0) ? esc_html('Select gallery source','modula-importer') : esc_html('No galleries detected','modula-importer') ;?></option>
-                    <?php
-                    foreach($galleries as $source=>$gallery){
-                        if($gallery['galleries']){
-                           echo '<option value="'.$source.'"> '.$gallery['label'].'</option>';
+                </th>
+                <td>
+                    <select name="modula_select_gallery_source" id="modula_select_gallery_source">
+                        <option value="none"><?php echo (count($galleries) > 0) ? esc_html('Select gallery source', 'modula-importer') : esc_html('No galleries detected', 'modula-importer'); ?></option>
+                        <?php
+                        foreach ($galleries as $source => $gallery) {
+                            if ($gallery['galleries']) {
+                                echo '<option value="' . $source . '"> ' . $gallery['label'] . '</option>';
+                            }
                         }
-                    }
-                    ?>
-                </select>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
+                        ?>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Select all checkbox-->
+    <div class="row select-all-wrapper hide">
+        <table class="form-table">
+            <tbody>
+            <tr valign="top">
+                <th scope="row" valign="top">
+                </th>
+                <td>
+                    <div>
+                        <label for="select-galleries"
+                               data-id="select-all">
+                            <input type="checkbox" name="select-all"
+                                   id="select-all"
+                                   value=""/>
+                            <?php echo esc_html__('Check to select all galleries.', 'modula-importer'); ?>
+                        </label>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 <?php
 if ($galleries) {
     foreach ($galleries as $source => $source_galleries) {
         if ($source_galleries['galleries']) {
             ?>
+
             <div id="modula-<?php echo esc_attr($source); ?>-importer" class="row modula-importer-row hide">
                 <form id="modula_importer_<?php echo esc_attr($source); ?>" method="post">
                     <table class="form-table">
@@ -191,7 +244,7 @@ if ($galleries) {
                             </th>
                             <td>
                                 <div>
-                                    <?php submit_button(__('Import', 'modula-importer'), 'primary', 'modula-importer-submit', false); ?>
+                                    <?php submit_button(__('Import', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
                                 </div>
                             </td>
                         </tr>

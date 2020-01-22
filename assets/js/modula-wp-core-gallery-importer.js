@@ -15,7 +15,7 @@
                 e.preventDefault();
 
                 // Check if gallery was selected
-                var galleries = $('input[name=gallery]:checked');
+                var galleries = $('form#modula_importer_wp_core input[name=gallery]:checked');
                 if (0 == galleries.length) {
                     alert(modula_wp_core_gallery_importer_settings.empty_gallery_selection);
                     return false;
