@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
     });
 
     $('#select-all').on('change', function () {
-        var checkboxes = $(this).parents('.wrap.modula').find('input[type="checkbox"]').not($(this));
+        var checkboxes = $(this).parents('.wrap.modula').find('input[type="checkbox"]').not($(this)).not('#delete-old-entries');
 
         if ($(this).prop('checked')) {
             checkboxes.each(function () {

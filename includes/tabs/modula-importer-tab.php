@@ -93,6 +93,27 @@ $galleries = apply_filters('modula_importable_galleries', $def_galleries);
             <tbody>
             <tr valign="top">
                 <th scope="row" valign="top">
+                    <?php echo esc_html__('Gallery database entries.', 'modula-importer'); ?>
+                    <div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span>
+                        <div class="tab-header-description modula-tooltip-content">
+                            <?php esc_html_e('Check this if you want to delete remnants or data entries in the database from the migrated galleries.', 'modula-importer') ?>
+                        </div>
+                    </div>
+                </th>
+                <td>
+                    <div>
+                        <label for="delete-old-entries"
+                               data-id="delete-old-entries">
+                            <input type="checkbox" name="delete-old-entries"
+                                   id="delete-old-entries"
+                                   value=""/>
+                            <?php echo esc_html__('Delete old gallery entries.', 'modula-importer'); ?>
+                        </label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" valign="top">
                 </th>
                 <td>
                     <div>

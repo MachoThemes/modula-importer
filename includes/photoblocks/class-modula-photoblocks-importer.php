@@ -165,6 +165,10 @@ class Modula_Photoblocks_Importer {
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
+        if('delete' == $_POST['clean']){
+            $this->clean_entries($gallery_id);
+        }
+
         $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
     }
 
@@ -199,6 +203,20 @@ class Modula_Photoblocks_Importer {
 
         return self::$instance;
 
+    }
+
+
+    /**
+     * Delete old entries from database
+     *
+     * @since 1.0.0
+     * @param $gallery_id
+     */
+    public function clean_entries($gallery_id){
+        global $wpdb;
+        $sql      = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."photoblocks WHERE id = $gallery_id" );
+        $wpdb->query( $sql );
+        $wpdb->query( $sql_meta );
     }
 
 }

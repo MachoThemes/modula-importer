@@ -156,6 +156,10 @@ class Modula_Final_Tiles_Importer {
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
+        if('delete' == $_POST['clean']){
+            $this->clean_entries($gallery_id);
+        }
+
         $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
     }
 
@@ -190,6 +194,20 @@ class Modula_Final_Tiles_Importer {
 
         return self::$instance;
 
+    }
+
+    /**
+     * Delete old entries from database
+     *
+     * @since 1.0.0
+     * @param $gallery_id
+     */
+    public function clean_entries($gallery_id){
+        global $wpdb;
+        $sql      = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."finaltiles_gallery WHERE Id = $gallery_id" );
+        $sql_meta = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."finaltiles_gallery_images WHERE gid = $gallery_id" );
+        $wpdb->query( $sql );
+        $wpdb->query( $sql_meta );
     }
 
 }

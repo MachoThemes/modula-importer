@@ -173,6 +173,10 @@ class Modula_Nextgen_Importer {
             $nextgen_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
+        if('delete' == $_POST['clean']){
+            $this->clean_entries($gallery_id);
+        }
+
         $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
     }
 
@@ -292,6 +296,20 @@ class Modula_Nextgen_Importer {
 
         return self::$instance;
 
+    }
+
+    /**
+     * Delete old entries from database
+     *
+     * @since 1.0.0
+     * @param $gallery_id
+     */
+    public function clean_entries($gallery_id){
+        global $wpdb;
+        $sql      = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."ngg_gallery WHERE gid = $gallery_id" );
+        $sql_meta = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."ngg_pictures WHERE galleryid = $gallery_id" );
+        $wpdb->query( $sql );
+        $wpdb->query( $sql_meta );
     }
 
 }

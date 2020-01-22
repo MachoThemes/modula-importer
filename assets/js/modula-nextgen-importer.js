@@ -39,6 +39,13 @@
         },
 
         processAjax: function( galleries_ids ){
+
+            var delete_entries = 'keep';
+
+            if($('#delete-old-entries').prop('checked')){
+                delete_entries = 'delete';
+            }
+
             galleries_ids.forEach( function( gallery_id ){
 
                 var status = $('form#modula_importer_nextgen label[data-id=' + gallery_id + ']');
@@ -54,7 +61,8 @@
                     data: {
                         action: 'modula_importer_nextgen_gallery_import',
                         id: gallery_id,
-                        nonce: modula_nextgen_importer_settings.nonce
+                        nonce: modula_nextgen_importer_settings.nonce,
+                        clean:delete_entries
                     },
                     success: function( response ) {
                         if ( ! response.success ) {

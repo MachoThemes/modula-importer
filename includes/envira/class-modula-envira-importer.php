@@ -149,6 +149,11 @@ class Modula_Envira_Importer {
             $envira_shortcodes, $modula_shortcode);
         $wpdb->query($sql);
 
+        // Trigger delete function if option is set to delete
+        if('delete' == $_POST['clean']){
+            $this->clean_entries($gallery_id);
+        }
+
         $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
     }
 
@@ -182,6 +187,20 @@ class Modula_Envira_Importer {
 
         return self::$instance;
 
+    }
+
+    /**
+     * Delete old entries from database
+     *
+     * @since 1.0.0
+     * @param $gallery_id
+     */
+    public function clean_entries($gallery_id){
+        global $wpdb;
+        $sql      = $wpdb->prepare( "DELETE FROM  $wpdb->posts WHERE ID = $gallery_id" );
+        $sql_meta = $wpdb->prepare( "DELETE FROM  $wpdb->postmeta WHERE post_id = $gallery_id" );
+        $wpdb->query( $sql );
+        $wpdb->query( $sql_meta );
     }
 
 }

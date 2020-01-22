@@ -39,6 +39,12 @@
 
         processAjax: function( galleries_ids ){
 
+            var delete_entries = 'keep';
+
+            if($('#delete-old-entries').prop('checked')){
+                delete_entries = 'delete';
+            }
+
             galleries_ids.forEach( function( gallery_id ){
 
                 var status = $('form#modula_importer_photoblocks label[data-id=' + gallery_id + ']');
@@ -55,7 +61,8 @@
                     data: {
                         action: 'modula_importer_photoblocks',
                         id: gallery_id,
-                        nonce: modula_pb_importer_settings.nonce
+                        nonce: modula_pb_importer_settings.nonce,
+                        clean:delete_entries
                     },
                     success: function( response ) {
                         if ( ! response.success ) {

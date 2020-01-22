@@ -39,6 +39,12 @@
 
         processAjax: function( galleries_ids ){
 
+            var delete_entries = false;
+
+            if($('#delete-old-entries').prop('checked')){
+                delete_entries = true;
+            }
+
             galleries_ids.forEach( function( gallery_id ){
 
                 var status = $('form#modula_importer_wp_core label[data-id=' + gallery_id + ']');
@@ -55,7 +61,8 @@
                     data: {
                         action: 'modula_importer_wp_core_gallery_import',
                         id: gallery_id,
-                        nonce: modula_wp_core_gallery_importer_settings.nonce
+                        nonce: modula_wp_core_gallery_importer_settings.nonce,
+                        clean:delete_entries
                     },
                     success: function( response ) {
                         if ( ! response.success ) {
