@@ -3,55 +3,7 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-?>
-    <style>
-        .modula-importer-row {
-            border-bottom: 2px solid #eee2ec;
-        }
 
-        .modula-importer-row.hide {
-            display: none;
-        }
-
-        .modula .hide {
-            display: none;
-        }
-    </style>
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            $('#modula_select_gallery_source').on('change', function () {
-                var targetID = $(this).val();
-                $('#modula-' + targetID + '-importer').removeClass('hide');
-                $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
-
-                if ('none' != targetID) {
-                    $('.select-all-wrapper').removeClass('hide');
-                } else {
-                    $('.select-all-wrapper').addClass('hide');
-                }
-
-            });
-
-            $('#select-all').on('change', function () {
-                var checkboxes = $(this).parents('.wrap.modula').find('input[type="checkbox"]').not($(this));
-
-                if ($(this).prop('checked')) {
-                    checkboxes.each(function () {
-                        if ($(this).is(':visible')) {
-                            checkboxes.prop('checked', true);
-                        }
-                    });
-                } else {
-                    checkboxes.each(function () {
-                        if ($(this).is(':visible')) {
-                            checkboxes.prop('checked', false);
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-<?php
 $import_settings = get_option('modula_importer');
 $import_settings = wp_parse_args($import_settings, array('galleries' => array()));
 $def_galleries   = array();

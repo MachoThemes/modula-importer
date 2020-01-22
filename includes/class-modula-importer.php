@@ -127,6 +127,8 @@ class Modula_Importer {
             $ajax_url = admin_url('admin-ajax.php');
             $nonce = wp_create_nonce('modula-importer');
 
+            wp_enqueue_style('modula-importer',MODULA_IMPORTER_URL.'assets/css/modula-importer.css',array(),MODULA_IMPORTER_VERSION);
+            wp_enqueue_script('modula-importer',MODULA_IMPORTER_URL.'assets/js/modula-importer.js',array('jquery'),MODULA_IMPORTER_VERSION,true);
             // only enqueue if nextGEN gallery plugin is active
             if (is_plugin_active('nextgen-gallery/nggallery.php')) {
                 // scripts required for nextGEN importer

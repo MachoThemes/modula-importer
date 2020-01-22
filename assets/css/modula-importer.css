@@ -1,0 +1,4 @@
+.modula .modula-importer-row.hide,
+.modula .select-all-wrapper.hide{
+    display: none;
+}
