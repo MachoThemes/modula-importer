@@ -12,8 +12,9 @@ jQuery(document).ready(function ($) {
 
     });
 
-    $('#select-all').on('change', function () {
-        var checkboxes = $(this).parents('.wrap.modula').find('input[type="checkbox"]').not($(this)).not('#delete-old-entries');
+    $('body').on('change','.select-all-checkbox', function () {
+
+        var checkboxes = $(this).parents('td').find('input[type="checkbox"]').not($(this));
 
         if ($(this).prop('checked')) {
             checkboxes.each(function () {

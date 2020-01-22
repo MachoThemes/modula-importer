@@ -112,21 +112,6 @@ $galleries = apply_filters('modula_importable_galleries', $def_galleries);
                     </div>
                 </td>
             </tr>
-            <tr>
-                <th scope="row" valign="top">
-                </th>
-                <td>
-                    <div>
-                        <label for="select-galleries"
-                               data-id="select-all">
-                            <input type="checkbox" name="select-all"
-                                   id="select-all"
-                                   value=""/>
-                            <?php echo esc_html__('Check to select all galleries.', 'modula-importer'); ?>
-                        </label>
-                    </div>
-                </td>
-            </tr>
             </tbody>
         </table>
     </div>
@@ -145,6 +130,15 @@ if ($galleries) {
                                 <?php echo esc_html($source_galleries['label']) . esc_html__(' galleries', 'modula-importer'); ?>
                             </th>
                             <td>
+                                <div>
+                                    <label for="select-galleries-<?php echo esc_attr($source); ?>"
+                                           data-id="select-all-<?php echo esc_attr($source); ?>">
+                                        <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
+                                               id="select-all-<?php echo esc_attr($source); ?>"
+                                               value="" class="select-all-checkbox"/>
+                                        <?php printf(esc_html__('Select all %s galleries.', 'modula-importer'),$source_galleries['label']); ?>
+                                    </label>
+                                </div>
                                 <?php
                                 foreach ($source_galleries['galleries'] as $gallery) {
                                     $imported = false;
@@ -197,7 +191,7 @@ if ($galleries) {
                                         <label for="<?php echo esc_attr($source); ?>-galleries-<?php echo esc_attr($id); ?>"
                                                data-id="<?php echo esc_attr($id); ?>"<?php echo($imported ? ' class="imported"' : ''); ?>>
                                             <input type="checkbox" name="gallery"
-                                                   id="envira-galleries-<?php echo esc_attr($id); ?>"
+                                                   id="<?php echo esc_attr($source); ?>-galleries-<?php echo esc_attr($id); ?>"
                                                    value="<?php echo esc_attr($id); ?>"/>
                                             <?php echo esc_html($title); ?>
                                             <span style="color:blue;">

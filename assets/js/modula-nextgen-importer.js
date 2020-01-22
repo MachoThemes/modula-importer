@@ -16,7 +16,7 @@
 
                 // Check if gallery was selected
                 var galleries = $('form#modula_importer_nextgen input[name=gallery]:checked');
-                console.log(galleries);
+
                 if (0 == galleries.length) {
                     alert(modula_nextgen_importer_settings.empty_gallery_selection);
                     return false;
