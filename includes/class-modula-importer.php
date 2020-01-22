@@ -142,8 +142,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one NextGEN Gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one NextGEN Gallery to migrate.', 'modula-importer'),
                     )
                 );
             }
@@ -161,8 +161,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one Envira Gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one Envira Gallery to migrate.', 'modula-importer'),
                     )
                 );
             }
@@ -180,8 +180,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one Final Tiles Grid Gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one Final Tiles Grid Gallery to migrate.', 'modula-importer'),
                     )
                 );
             }
@@ -199,8 +199,8 @@ class Modula_Importer {
                     array(
                         'ajax'                    => $ajax_url,
                         'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one PhotoBlocks gallery to import.', 'modula-importer'),
+                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
+                        'empty_gallery_selection' => esc_html__('Please choose at least one PhotoBlocks gallery to migrate.', 'modula-importer'),
                     )
                 );
             }
@@ -216,7 +216,7 @@ class Modula_Importer {
                 array(
                     'ajax'                    => $ajax_url,
                     'nonce'                   => $nonce,
-                    'importing'               => '<span style="color:green">' . esc_html__('Import started...', 'modula-importer') . '</span>',
+                    'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
                     'empty_gallery_selection' => esc_html__('Please choose at least one gallery.', 'modula-importer'),
                 )
             );
@@ -235,7 +235,7 @@ class Modula_Importer {
     public function add_importer_tab($tabs) {
         if (class_exists('Modula_PRO')) {
             $tabs['importer'] = array(
-                'label'    => esc_html__('Import galleries', 'modula-importer'),
+                'label'    => esc_html__('Migrate galleries', 'modula-importer'),
                 'priority' => 50,
             );
         }

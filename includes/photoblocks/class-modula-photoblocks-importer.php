@@ -165,7 +165,7 @@ class Modula_Photoblocks_Importer {
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
-        $this->modula_import_result(true, __('Imported!', 'modula-importer'));
+        $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
     }
 
 

@@ -66,8 +66,8 @@ $galleries = apply_filters('modula_importable_galleries', $def_galleries);
                     <?php esc_html_e('Gallery source', 'modula-importer'); ?>
                     <div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span>
                         <div class="tab-header-description modula-tooltip-content">
-                            <?php esc_html_e('Select from which source would you like to import the gallery.', 'modula-importer') ?>
-                            <?php esc_html_e('Importing galleries will also replace the shortcode of the gallery with the new Modula shortcode in pages and posts.', 'modula-importer') ?>
+                            <?php esc_html_e('Select from which source would you like to migrate the gallery.', 'modula-importer') ?>
+                            <?php esc_html_e('Migrating galleries will also replace the shortcode of the gallery with the new Modula shortcode in pages and posts.', 'modula-importer') ?>
                         </div>
                     </div>
                 </th>
@@ -181,7 +181,7 @@ if ($galleries) {
                                             <?php echo esc_html($title); ?>
                                             <span style="color:blue;">
                                     <?php if ($imported) {
-                                        esc_html_e('Imported', 'modula-importer');
+                                        esc_html_e('Migrated', 'modula-importer');
                                     } ?>
                                     </span>
                                         </label>
@@ -196,7 +196,7 @@ if ($galleries) {
                             </th>
                             <td>
                                 <div>
-                                    <?php submit_button(__('Import', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
+                                    <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
                                 </div>
                             </td>
                         </tr>
