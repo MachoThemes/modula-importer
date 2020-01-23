@@ -107,7 +107,7 @@ class Modula_Nextgen_Importer {
                 // Store image in WordPress Media Library
                 $attachment = $this->add_image_to_library($gallery->path, $image->filename, $image->description, $image->alttext);
 
-                if ($attachment !== false) {
+                if ($attachment !== false ) {
 
                     // Add to array of attachments
                     $attachments[] = $attachment;
@@ -167,8 +167,7 @@ class Modula_Nextgen_Importer {
         if('delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
-
-        $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
+        $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'));
     }
 
     /**
@@ -212,6 +211,23 @@ class Modula_Nextgen_Importer {
      * @since 1.0.0
      */
     public function add_image_to_library($source_path, $source_file, $description, $alt) {
+
+        global $wpdb;
+        $sql = $wpdb->prepare(
+            "SELECT * FROM $wpdb->posts WHERE guid LIKE %s",
+            '%'.$source_file
+        );
+
+        $queried = $wpdb->get_results( $sql );
+
+        if (count($queried) > 0) {
+            return array(
+                'ID'    => $queried[0]->ID,
+                'title' => $queried[0]->post_title,
+                'alt'   => get_post_meta($queried[0]->ID, '_wp_attachment_image_alt', true),
+                'caption' =>  $queried[0]->post_content
+            );
+        }
 
         // Get full path and filename
         $source_file_path = ABSPATH . $source_path . '/' . $source_file;
