@@ -5,12 +5,15 @@
 
 .imported-check {
     display:inline-block;
-    width:16px;
-    height:16px;
-    border-radius: 8px;
-    font-size:14px;
-    background:#00b894;
-    color:#fff;
     margin-left:10px;
-    line-height: 16px;
+}
+
+
+.imported-check:before {
+    font-size: 20px;
+    color: #00b894;
+}
+
+.modula-importer-checkbox-wrapper {
+    margin-bottom:10px;
 }

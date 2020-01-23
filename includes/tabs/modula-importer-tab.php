@@ -130,7 +130,7 @@ if ($galleries) {
                                 <?php echo esc_html($source_galleries['label']) . esc_html__(' galleries', 'modula-importer'); ?>
                             </th>
                             <td>
-                                <div>
+                                <div class="modula-importer-checkbox-wrapper">
                                     <label for="select-galleries-<?php echo esc_attr($source); ?>"
                                            data-id="select-all-<?php echo esc_attr($source); ?>">
                                         <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
@@ -187,7 +187,7 @@ if ($galleries) {
                                     }
                                     ?>
 
-                                    <div>
+                                    <div class="modula-importer-checkbox-wrapper">
                                         <label for="<?php echo esc_attr($source); ?>-galleries-<?php echo esc_attr($id); ?>"
                                                data-id="<?php echo esc_attr($id); ?>"<?php echo($imported ? ' class="imported"' : ''); ?>>
                                             <input type="checkbox" name="gallery"
