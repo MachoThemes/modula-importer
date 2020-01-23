@@ -66,12 +66,17 @@
                         clean: delete_entries
                     },
                     success: function( response ) {
+                        modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;
                         if ( ! response.success ) {
                             status.find('span').text(response.message);
+                            console.log(modulaEnviraImporter.counts , modulaEnviraImporter.completed );
+                            if(modulaEnviraImporter.counts == modulaEnviraImporter.completed - 1){
+                                modulaEnviraImporter.updateImported(galleries_ids,delete_entries);
+                            }
                             return;
                         }
 
-                        modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;
+                       /* modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;*/
 
                         // Display result from AJAX call
                         status.find('span').html(response.message);
@@ -80,6 +85,7 @@
                         modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted - 1;
 
                         if(modulaEnviraImporter.counts == modulaEnviraImporter.completed){
+                            console.log(modulaEnviraImporter.counts , modulaEnviraImporter.completed );
                             modulaEnviraImporter.updateImported(galleries_ids,delete_entries);
                         }
                     }
@@ -123,7 +129,7 @@
             };
 
             $.post(ajaxurl,data,function(response){
-
+                window.location.href = response;
             });
         }
 

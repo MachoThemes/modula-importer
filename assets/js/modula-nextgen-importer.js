@@ -67,12 +67,13 @@
                     },
                     success: function( response ) {
 
+                        modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;
                         if ( ! response.success ) {
                             status.find('span').text(response.message);
                             return;
                         }
 
-                        modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;
+                        /*modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;*/
 
                         // Display result from AJAX call
                         status.find('span').html(response.message);

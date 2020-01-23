@@ -65,12 +65,13 @@
                         clean:delete_entries
                     },
                     success: function( response ) {
+                        modulaPhotoblocksImporter.completed = modulaPhotoblocksImporter.completed + 1;
                         if ( ! response.success ) {
                             status.find('span').text(response.message);
                             return;
                         }
 
-                        modulaPhotoblocksImporter.completed = modulaPhotoblocksImporter.completed + 1;
+                        /*modulaPhotoblocksImporter.completed = modulaPhotoblocksImporter.completed + 1;*/
 
                         // Display result from AJAX call
                         status.find('span').html(response.message);
@@ -122,7 +123,7 @@
             };
 
             $.post(ajaxurl,data,function(response){
-
+                window.location.href = response;
             });
         }
 
