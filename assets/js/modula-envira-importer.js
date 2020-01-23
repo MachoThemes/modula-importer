@@ -13,6 +13,7 @@
 
             $('form#modula_importer_envira').submit(function (e) {
                 e.preventDefault();
+                modulaEnviraImporter.completed = 0;
 
                 // Check if gallery was selected
                 var galleries = $('form#modula_importer_envira input[name=gallery]:checked');
@@ -30,7 +31,7 @@
                     id_array[i] = $(this).val();
                 });
 
-                modulaEnviraImporter.counts = id_array.length + 1;
+                modulaEnviraImporter.counts = id_array.length;
                 modulaEnviraImporter.processAjax( id_array );
 
             });
@@ -76,6 +77,10 @@
 
                         // Remove one ajax from queue
                         modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted - 1;
+
+                        if(modulaEnviraImporter.counts == modulaEnviraImporter.completed){
+                            modulaEnviraImporter.updateImported(galleries_ids);
+                        }
                     }
                 };
                 modulaEnviraImporter.ajaxRequests.push( opts );
@@ -83,6 +88,7 @@
 
             });
             modulaEnviraImporter.runAjaxs();
+
         },
 
         runAjaxs: function() {
@@ -105,6 +111,19 @@
             }
 
         },
+        // Update imported galleries
+        updateImported: function(galleries_ids){
+
+            var  data = {
+                action: 'modula_importer_envira_gallery_imported_update',
+                galleries: galleries_ids,
+                nonce: modula_envira_importer_settings.nonce,
+            };
+
+            $.post(ajaxurl,data,function(response){
+
+            });
+        }
 
     };
 

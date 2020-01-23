@@ -30,7 +30,7 @@
                     id_array[i] = $(this).val();
                 });
 
-                modulaFinalTilesImporter.counts = id_array.length + 1;
+                modulaFinalTilesImporter.counts = id_array.length;
                 modulaFinalTilesImporter.processAjax( id_array );
 
             });
@@ -76,6 +76,9 @@
 
                         // Remove one ajax from queue
                         modulaFinalTilesImporter.ajaxStarted = modulaFinalTilesImporter.ajaxStarted - 1;
+                        if(modulaFinalTilesImporter.counts == modulaFinalTilesImporter.completed){
+                            modulaFinalTilesImporter.updateImported(galleries_ids);
+                        }
                     }
                 };
                 modulaFinalTilesImporter.ajaxRequests.push( opts );
@@ -83,6 +86,7 @@
 
             });
             modulaFinalTilesImporter.runAjaxs();
+
         },
 
         runAjaxs: function() {
@@ -105,6 +109,19 @@
             }
 
         },
+        // Update imported galleries
+        updateImported: function(galleries_ids){
+
+            var data = {
+                action: 'modula_importer_final_tiles_update_imported',
+                galleries: galleries_ids,
+                nonce: modula_ftg_importer_settings.nonce,
+            };
+
+            $.post(ajaxurl,data,function(response){
+
+            });
+        }
 
     };
 

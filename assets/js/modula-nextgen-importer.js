@@ -13,6 +13,7 @@
 
             $('form#modula_importer_nextgen').submit(function (e) {
                 e.preventDefault();
+                modulaNextgenImporter.completed = 0;
 
                 // Check if gallery was selected
                 var galleries = $('form#modula_importer_nextgen input[name=gallery]:checked');
@@ -31,7 +32,7 @@
                     id_array[i] = $(this).val();
                 });
 
-                modulaNextgenImporter.counts = id_array.length + 1;
+                modulaNextgenImporter.counts = id_array.length;
                 modulaNextgenImporter.processAjax( id_array );
 
             });
@@ -76,12 +77,17 @@
 
                         // Remove one ajax from queue
                         modulaNextgenImporter.ajaxStarted = modulaNextgenImporter.ajaxStarted - 1;
+
+                        if(modulaNextgenImporter.counts == modulaNextgenImporter.completed ){
+                            modulaNextgenImporter.updateImported(galleries_ids);
+                        }
                     }
                 };
                 modulaNextgenImporter.ajaxRequests.push( opts );
-                // $.ajax(opts);
+
 
             });
+
             modulaNextgenImporter.runAjaxs();
         },
 
@@ -103,33 +109,20 @@
                 $('form#modula_importer_nextgen :input').prop('disabled', false);
             }
 
-
         },
+        // Update imported galleries
+        updateImported: function(galleries_ids){
 
-        completeUpgrade: function() {
-
-            var opts = {
-                url:      ajaxurl,
-                type:     'post',
-                async:    true,
-                cache:    false,
-                dataType: 'json',
-                data: {
-                    action: 'modula-complete-upgrade',
-                    nonce:  modulaUpgraderHelper.upgrade_complete_nonce,
-                },
-                success: function( response ) {
-                    if ( response.status != 'succes' ) {
-                        return;
-                    }
-
-                    modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;
-                    $('.modula-ajax-output').append( '<p>' + response.message + '</p>' );
-                    modulaNextgenImporter.updateProgress();
-                }
+            var data = {
+                action: 'modula_importer_nextgen_gallery_imported_update',
+                galleries: galleries_ids,
+                nonce: modula_nextgen_importer_settings.nonce,
             };
-            $.ajax(opts);
-        }
+
+            $.post(ajaxurl,data,function(response){
+
+            });
+        },
     };
 
     $( document ).ready(function(){

@@ -24,6 +24,7 @@ class Modula_Photoblocks_Importer {
 
         // Add AJAX
         add_action('wp_ajax_modula_importer_photoblocks', array($this, 'photoblocks_gallery_import'));
+        add_action('wp_ajax_modula_importer_photoblocks_update_imported', array($this, 'update_imported'));
 
     }
 
@@ -147,16 +148,6 @@ class Modula_Photoblocks_Importer {
         // Attach meta modula-images to Modula CPT
         update_post_meta($modula_gallery_id, 'modula-images', $modula_images);
 
-        $importer_settings = get_option('modula_importer');
-
-        if (!isset($importer_settings['galleries'])) {
-            $importer_settings['galleries'] = array();
-        }
-
-        // Remember that this gallery has been imported
-        $importer_settings['galleries']['photoblocks'][$gallery_id] = $modula_gallery_id;
-        update_option('modula_importer', $importer_settings);
-
         $ftg_shortcode    = '[photoblocks id=' . $gallery_id . ']';
         $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
@@ -170,6 +161,34 @@ class Modula_Photoblocks_Importer {
         }
 
         $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
+    }
+
+    /**
+     * Update imported galleries
+     *
+     * @since 1.0.0
+     * @param array $galleries
+     */
+    public function update_imported() {
+
+        check_ajax_referer('modula-importer', 'nonce');
+        $galleries         = $_POST['galleries'];
+        $importer_settings = get_option('modula_importer');
+
+        if(!is_array($importer_settings)){
+            $importer_settings = array();
+        }
+
+        if (!isset($importer_settings['galleries']['photoblocks'])) {
+            $importer_settings['galleries']['photoblocks'] = array();
+        }
+
+        $galleries = array_merge($importer_settings['galleries']['photoblocks'], $galleries);
+
+        // Remember that this gallery has been imported
+        $importer_settings['galleries']['photoblocks'] = $galleries;
+        update_option('modula_importer', $importer_settings);
+
     }
 
 

@@ -83,6 +83,7 @@
 
             });
             modulaPhotoblocksImporter.runAjaxs();
+            modulaPhotoblocksImporter.updateImported(galleries_ids);
         },
 
         runAjaxs: function() {
@@ -105,6 +106,19 @@
             }
 
         },
+        // Update imported galleries
+        updateImported: function(galleries_ids){
+
+            var data = {
+                action: 'modula_importer_photoblocks_update_imported',
+                galleries: galleries_ids,
+                nonce: modula_pb_importer_settings.nonce,
+            };
+
+            $.post(ajaxurl,data,function(response){
+
+            });
+        }
 
     };
 

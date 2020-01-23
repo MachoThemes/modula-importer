@@ -144,14 +144,14 @@ if ($galleries) {
                                     $imported = false;
                                     switch ($source) {
                                         case 'envira':
-                                            if (isset($import_settings['galleries']['envira']) && isset($import_settings['galleries']['envira'][$gallery->ID])) {
+                                            if (isset($import_settings['galleries']['envira']) && in_array($gallery->ID,$import_settings['galleries']['envira'])) {
                                                 $imported = true;
                                             }
                                             $id    = $gallery->ID;
                                             $title = $gallery->post_title;
                                             break;
                                         case 'final_tiles' :
-                                            if (isset($import_settings['galleries']['final_tiles']) && isset($import_settings['galleries']['final_tiles'][$gallery->Id])) {
+                                            if (isset($import_settings['galleries']['final_tiles']) && in_array($gallery->Id,$import_settings['galleries']['final_tiles'])) {
                                                 $imported = true;
                                             }
                                             $id         = $gallery->Id;
@@ -159,7 +159,7 @@ if ($galleries) {
                                             $title      = $ftg_config->name;
                                             break;
                                         case 'nextgen':
-                                            if (isset($import_settings['galleries']['nextgen']) && isset($import_settings['galleries']['nextgen'][$gallery->gid])) {
+                                            if (isset($import_settings['galleries']['nextgen']) && in_array($gallery->gid,$import_settings['galleries']['nextgen'])) {
                                                 $imported = true;
                                             }
                                             $id    = $gallery->gid;
@@ -167,7 +167,7 @@ if ($galleries) {
                                             break;
                                         case
                                         'photoblocks':
-                                            if (isset($import_settings['galleries']['photoblocks']) && isset($import_settings['galleries']['photoblocks'][$gallery->id])) {
+                                            if (isset($import_settings['galleries']['photoblocks']) && in_array($gallery->id,$import_settings['galleries']['photoblocks'])) {
                                                 $imported = true;
                                             }
                                             $id    = $gallery->id;
@@ -178,7 +178,7 @@ if ($galleries) {
                                             $title = $gallery->post_title;
                                             break;
                                         default:
-                                            if (isset($import_settings['galleries'][$source]) && isset($import_settings['galleries'][$source]['id'])) {
+                                            if (isset($import_settings['galleries'][$source]) && in_array($gallery->id,$import_settings['galleries'][$source])) {
                                                 $imported = true;
                                             }
                                             $id    = $gallery->ID;
