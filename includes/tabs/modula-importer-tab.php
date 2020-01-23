@@ -10,6 +10,9 @@ $def_galleries   = array();
 $sources         = array();
 $galleries       = array();
 
+$migrate = $_GET['migration'];
+$delete = $_GET['delete'];
+
 $envira           = Modula_Envira_Importer::get_instance();
 $envira_galleries = $envira->get_galleries();
 if ($envira_galleries) {
@@ -114,6 +117,18 @@ $galleries = apply_filters('modula_importable_galleries', $def_galleries);
             </tr>
             </tbody>
         </table>
+    </div>
+    <div class="update-complete">
+        <?php
+            if($migrate && !$delete){
+               echo '<h3>'.esc_html__('All done, good job! All galleries have been migrated.','modula-importer').'</h3>';
+            }
+
+            if($migrate && $delete){
+                echo '<h3>'.esc_html__('All done, good job! All galleries have been migrated and old entries have been deleted.','modula-importer').'</h3>';
+            }
+
+        ?>
     </div>
 <?php
 if ($galleries) {

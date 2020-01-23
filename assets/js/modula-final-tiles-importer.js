@@ -78,7 +78,7 @@
                         // Remove one ajax from queue
                         modulaFinalTilesImporter.ajaxStarted = modulaFinalTilesImporter.ajaxStarted - 1;
                         if(modulaFinalTilesImporter.counts == modulaFinalTilesImporter.completed){
-                            modulaFinalTilesImporter.updateImported(galleries_ids);
+                            modulaFinalTilesImporter.updateImported(galleries_ids,delete_entries);
                         }
                     }
                 };
@@ -111,11 +111,12 @@
 
         },
         // Update imported galleries
-        updateImported: function(galleries_ids){
+        updateImported: function(galleries_ids,delete_entries){
 
             var data = {
                 action: 'modula_importer_final_tiles_update_imported',
                 galleries: galleries_ids,
+                clean: delete_entries,
                 nonce: modula_ftg_importer_settings.nonce,
             };
 

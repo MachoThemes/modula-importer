@@ -196,6 +196,14 @@ class Modula_Nextgen_Importer {
         $importer_settings['galleries']['nextgen'] = $galleries;
         update_option('modula_importer', $importer_settings);
 
+        $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
+
+        if('delete' == $_POST['clean']){
+            $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
+        }
+
+        echo $url;
+        wp_die();
     }
 
 

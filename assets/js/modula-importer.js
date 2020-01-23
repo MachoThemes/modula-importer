@@ -1,6 +1,12 @@
 jQuery(document).ready(function ($) {
     $('#modula_select_gallery_source').on('change', function () {
         var targetID = $(this).val();
+
+        // Hide the response if user goes through sources again
+        if($('body').find('.update-complete').length){
+            $('body').find('.update-complete').hide();
+        }
+
         $('#modula-' + targetID + '-importer').removeClass('hide');
         $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
 

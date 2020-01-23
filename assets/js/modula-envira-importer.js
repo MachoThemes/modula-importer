@@ -80,7 +80,7 @@
                         modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted - 1;
 
                         if(modulaEnviraImporter.counts == modulaEnviraImporter.completed){
-                            modulaEnviraImporter.updateImported(galleries_ids);
+                            modulaEnviraImporter.updateImported(galleries_ids,delete_entries);
                         }
                     }
                 };
@@ -113,11 +113,12 @@
 
         },
         // Update imported galleries
-        updateImported: function(galleries_ids){
+        updateImported: function(galleries_ids,delete_entries){
 
             var  data = {
                 action: 'modula_importer_envira_gallery_imported_update',
                 galleries: galleries_ids,
+                clean: delete_entries,
                 nonce: modula_envira_importer_settings.nonce,
             };
 
