@@ -85,6 +85,7 @@ class Modula_Importer {
         // Load admin only components.
         if (is_admin()) {
             add_action('modula_pro_updater', array($this, 'addon_updater'), 15, 2);
+            add_filter('modula_uninstall_options',array($this,'uninstall_options'),16,1);
         }
 
     }
@@ -253,6 +254,12 @@ class Modula_Importer {
         if (class_exists('Modula_PRO')) {
             include 'tabs/modula-importer-tab.php';
         }
+    }
+
+    public function uninstall_options($options_array){
+        array_push($options_array,'modula_importer');
+
+        return $options_array;
     }
 
 
