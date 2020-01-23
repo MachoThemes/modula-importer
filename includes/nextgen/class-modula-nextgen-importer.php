@@ -215,7 +215,7 @@ class Modula_Nextgen_Importer {
         global $wpdb;
         $sql = $wpdb->prepare(
             "SELECT * FROM $wpdb->posts WHERE guid LIKE %s",
-            '%'.$source_file
+            '%/'.$source_file
         );
 
         $queried = $wpdb->get_results( $sql );
