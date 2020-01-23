@@ -66,13 +66,14 @@
                     },
                     success: function( response ) {
                         if ( ! response.success ) {
+                            status.find('span').text(response.message);
                             return;
                         }
 
                         modulaFinalTilesImporter.completed = modulaFinalTilesImporter.completed + 1;
 
                         // Display result from AJAX call
-                        status.find('span').text(response.message);
+                        status.find('span').html(response.message);
 
                         // Remove one ajax from queue
                         modulaFinalTilesImporter.ajaxStarted = modulaFinalTilesImporter.ajaxStarted - 1;

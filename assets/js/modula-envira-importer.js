@@ -67,13 +67,14 @@
                     },
                     success: function( response ) {
                         if ( ! response.success ) {
+                            status.find('span').text(response.message);
                             return;
                         }
 
                         modulaEnviraImporter.completed = modulaEnviraImporter.completed + 1;
 
                         // Display result from AJAX call
-                        status.find('span').text(response.message);
+                        status.find('span').html(response.message);
 
                         // Remove one ajax from queue
                         modulaEnviraImporter.ajaxStarted = modulaEnviraImporter.ajaxStarted - 1;

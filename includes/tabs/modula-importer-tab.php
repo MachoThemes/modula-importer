@@ -195,9 +195,9 @@ if ($galleries) {
                                                    value="<?php echo esc_attr($id); ?>"/>
                                             <?php echo esc_html($title); ?>
                                             <span style="color:blue;">
-                                    <?php if ($imported) {
-                                        esc_html_e('Migrated', 'modula-importer');
-                                    } ?>
+                                    <?php if ($imported) { ?>
+                                        <i class="imported-check dashicons dashicons-yes"></i>
+                                   <?php } ?>
                                     </span>
                                         </label>
                                     </div>

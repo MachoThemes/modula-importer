@@ -66,14 +66,16 @@
                         clean:delete_entries
                     },
                     success: function( response ) {
+
                         if ( ! response.success ) {
+                            status.find('span').text(response.message);
                             return;
                         }
 
                         modulaNextgenImporter.completed = modulaNextgenImporter.completed + 1;
 
                         // Display result from AJAX call
-                        status.find('span').text(response.message);
+                        status.find('span').html(response.message);
 
                         // Remove one ajax from queue
                         modulaNextgenImporter.ajaxStarted = modulaNextgenImporter.ajaxStarted - 1;
@@ -81,7 +83,7 @@
                         if(modulaNextgenImporter.counts == modulaNextgenImporter.completed ){
                             modulaNextgenImporter.updateImported(galleries_ids);
                         }
-                    }
+                    },
                 };
                 modulaNextgenImporter.ajaxRequests.push( opts );
 
