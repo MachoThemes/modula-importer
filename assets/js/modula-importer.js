@@ -7,14 +7,29 @@ jQuery(document).ready(function ($) {
             $('body').find('.update-complete').hide();
         }
 
-        $('#modula-' + targetID + '-importer').removeClass('hide');
-        $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
+        var data = {
+            action : 'modula_importer_get_galleries',
+            nonce : modula_importer.nonce,
+            source : targetID
+        };
 
-        if ('none' != targetID) {
-            $('.select-all-wrapper').removeClass('hide');
-        } else {
-            $('.select-all-wrapper').addClass('hide');
-        }
+        $.post(ajaxurl,data,function(response){
+
+            if ( ! response ) {
+                return;
+            }
+
+            $('#modula-' + targetID + '-importer').removeClass('hide');
+            console.log($('#modula-' + targetID + '-importer').find('.modula-found-galleries'));
+            $('#modula-' + targetID + '-importer').find('.modula-found-galleries').html(response);
+            $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
+
+            if ('none' != targetID) {
+                $('.select-all-wrapper').removeClass('hide');
+            } else {
+                $('.select-all-wrapper').addClass('hide');
+            }
+        });
 
     });
 
