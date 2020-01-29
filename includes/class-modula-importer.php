@@ -204,8 +204,13 @@ class Modula_Importer {
             $nextgen = $wpdb->get_results(" SELECT COUNT(gid) FROM " . $wpdb->prefix . "ngg_gallery");
         }
 
+        // Seems like on some servers tables are saved lowercase
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
             $final_tiles = $wpdb->get_results(" SELECT COUNT(Id) FROM " . $wpdb->prefix . "finaltiles_gallery");
+        }
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'")) {
+            $final_tiles = $wpdb->get_results(" SELECT COUNT(Id) FROM " . $wpdb->prefix . "FinalTiles_gallery");
         }
 
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "photoblocks'")) {

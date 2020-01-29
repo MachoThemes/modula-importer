@@ -81,18 +81,38 @@ class Modula_Final_Tiles_Importer {
 
         }
 
-        // Get images from Final Tiles
-        $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery_images
+
+        // Seems like on some servers tables are saved lowercase
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
+            // Get images from Final Tiles
+            $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery_images
     						WHERE gid = %d
     						ORDER BY 'setOrder' ASC",
-            $gallery_id);
-        $images = $wpdb->get_results($sql);
+                $gallery_id);
+            $images = $wpdb->get_results($sql);
 
-        // Get gallery configuration
-        $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery
+            // Get gallery configuration
+            $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery
     						WHERE id = %d",
-            $gallery_id);
-        $gallery = $wpdb->get_row($sql);
+                $gallery_id);
+            $gallery = $wpdb->get_row($sql);
+        }
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'")) {
+            // Get images from Final Tiles
+            $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery_images
+    						WHERE gid = %d
+    						ORDER BY 'setOrder' ASC",
+                $gallery_id);
+            $images = $wpdb->get_results($sql);
+
+            // Get gallery configuration
+            $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery
+    						WHERE id = %d",
+                $gallery_id);
+            $gallery = $wpdb->get_row($sql);
+        }
+
 
         $gallery_config = json_decode($gallery->configuration);
 
