@@ -40,7 +40,7 @@ class Modula_Envira_Importer {
 
         global $wpdb;
 
-        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type ='envira'");
+        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type = 'envira' AND post_status = 'publish'");
 
         if (count($galleries) != 0) {
             return $galleries;
