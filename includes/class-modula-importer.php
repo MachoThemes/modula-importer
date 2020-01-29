@@ -123,8 +123,8 @@ class Modula_Importer {
 
         $screen = get_current_screen();
 
-        // only enqueue script if we are in Modula Settings page on modula importer tab
-        if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base && isset($_GET['modula-tab']) && 'importer' == $_GET['modula-tab']) {
+        // only enqueue script if we are in Modula Settings page
+        if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base ) {
 
             $ajax_url      = admin_url('admin-ajax.php');
             $nonce         = wp_create_nonce('modula-importer');
