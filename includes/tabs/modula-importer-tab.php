@@ -12,7 +12,7 @@ $migrate = isset($_GET['migration']) ? $_GET['migration'] : false;
 $delete  = isset($_GET['delete']) ? $_GET['delete'] : false;
 
 $modula_importer = Modula_Importer::get_instance();
-$sources         = $modula_importer->get_cources();
+$sources         = $modula_importer->get_sources();
 
 $sources = apply_filters('modula_importable_galleries', $sources);
 ?>
@@ -32,10 +32,12 @@ $sources = apply_filters('modula_importable_galleries', $sources);
                 </th>
                 <td>
                     <select name="modula_select_gallery_source" id="modula_select_gallery_source">
-                        <option value="none"><?php echo (count($sources) > 0) ? esc_html('Select gallery source', 'modula-importer') : esc_html('No galleries detected', 'modula-importer'); ?></option>
+                        <option value="none"><?php echo ($sources && count($sources) > 0) ? esc_html('Select gallery source', 'modula-importer') : esc_html('No galleries detected', 'modula-importer'); ?></option>
                         <?php
-                        foreach ($sources as $source => $label) {
-                            echo '<option value="' . $source . '"> ' . $label . '</option>';
+                        if ($sources) {
+                            foreach ($sources as $source => $label) {
+                                echo '<option value="' . $source . '"> ' . $label . '</option>';
+                            }
                         }
                         ?>
                     </select>
@@ -85,43 +87,45 @@ $sources = apply_filters('modula_importable_galleries', $sources);
         ?>
     </div>
 <?php
-foreach ($sources as $source=>$label) {
-    ?>
+if ($sources) {
+    foreach ($sources as $source => $label) {
+        ?>
 
-    <div id="modula-<?php echo esc_attr($source); ?>-importer" class="row modula-importer-row hide">
-        <form id="modula_importer_<?php echo esc_attr($source); ?>" method="post">
-            <table class="form-table">
-                <tbody>
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                        <?php echo esc_html($label) . esc_html__(' galleries', 'modula-importer'); ?>
-                    </th>
-                    <td>
-                        <div class="modula-importer-checkbox-wrapper">
-                            <label for="select-galleries-<?php echo esc_attr($source); ?>"
-                                   data-id="select-all-<?php echo esc_attr($source); ?>">
-                                <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
-                                       id="select-all-<?php echo esc_attr($source); ?>"
-                                       value="" class="select-all-checkbox"/>
-                                <?php printf(esc_html__('Select all %s galleries.', 'modula-importer'), $label); ?>
-                            </label>
-                        </div>
-                        <div class="modula-found-galleries"></div>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row" valign="top">
-                    </th>
-                    <td>
-                        <div>
-                            <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <?php
+        <div id="modula-<?php echo esc_attr($source); ?>-importer" class="row modula-importer-row hide">
+            <div id="modula_importer_<?php echo esc_attr($source); ?>">
+                <table class="form-table">
+                    <tbody>
+                    <tr valign="top">
+                        <th scope="row" valign="top">
+                            <?php echo esc_html($label) . esc_html__(' galleries', 'modula-importer'); ?>
+                        </th>
+                        <td>
+                            <div class="modula-importer-checkbox-wrapper">
+                                <label for="select-galleries-<?php echo esc_attr($source); ?>"
+                                       data-id="select-all-<?php echo esc_attr($source); ?>">
+                                    <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
+                                           id="select-all-<?php echo esc_attr($source); ?>"
+                                           value="" class="select-all-checkbox"/>
+                                    <?php printf(esc_html__('Select all %s galleries.', 'modula-importer'), $label); ?>
+                                </label>
+                            </div>
+                            <div class="modula-found-galleries"></div>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row" valign="top">
+                        </th>
+                        <td>
+                            <div>
+                                <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php
+    }
 }
 ?>

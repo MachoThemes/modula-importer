@@ -126,109 +126,20 @@ class Modula_Importer {
         // only enqueue script if we are in Modula Settings page on modula importer tab
         if ('modula-gallery' == $screen->post_type && 'modula-gallery_page_modula' == $screen->base && isset($_GET['modula-tab']) && 'importer' == $_GET['modula-tab']) {
 
-            $ajax_url = admin_url('admin-ajax.php');
-            $nonce = wp_create_nonce('modula-importer');
+            $ajax_url      = admin_url('admin-ajax.php');
+            $nonce         = wp_create_nonce('modula-importer');
+            $empty_gallery = esc_html__('Please choose at least one gallery to migrate.', 'modula-importer');
 
-            wp_enqueue_style('modula-importer',MODULA_IMPORTER_URL.'assets/css/modula-importer.css',array(),MODULA_IMPORTER_VERSION);
-            wp_enqueue_script('modula-importer',MODULA_IMPORTER_URL.'assets/js/modula-importer.js',array('jquery'),MODULA_IMPORTER_VERSION,true);
+            wp_enqueue_style('modula-importer', MODULA_IMPORTER_URL . 'assets/css/modula-importer.css', array(), MODULA_IMPORTER_VERSION);
+            wp_enqueue_script('modula-importer', MODULA_IMPORTER_URL . 'assets/js/modula-importer.js', array('jquery'), MODULA_IMPORTER_VERSION, true);
             wp_localize_script(
                 'modula-importer',
                 'modula_importer',
                 array(
                     'ajax'                    => $ajax_url,
                     'nonce'                   => $nonce,
-                )
-            );
-
-            // only enqueue if nextGEN gallery plugin is active
-            if (is_plugin_active('nextgen-gallery/nggallery.php')) {
-                // scripts required for nextGEN importer
-                wp_register_script('modula-nextgen-importer', MODULA_IMPORTER_URL . 'assets/js/modula-nextgen-importer.js', '', MODULA_IMPORTER_VERSION, true);
-                wp_enqueue_script('modula-nextgen-importer');
-
-                // Strings added to js are used for translation
-                wp_localize_script(
-                    'modula-nextgen-importer',
-                    'modula_nextgen_importer_settings',
-                    array(
-                        'ajax'                    => $ajax_url,
-                        'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one NextGEN Gallery to migrate.', 'modula-importer'),
-                    )
-                );
-            }
-
-            // only enqueue if Envira gallery plugin is active
-            if (is_plugin_active('envira-gallery/envira-gallery.php') || is_plugin_active('envira-gallery-lite/envira-gallery-lite.php')) {
-                // scripts required for Envira importer
-                wp_register_script('modula-envira-importer', MODULA_IMPORTER_URL . 'assets/js/modula-envira-importer.js', '', MODULA_IMPORTER_VERSION, true);
-                wp_enqueue_script('modula-envira-importer');
-
-                // Strings added to js are used for translation
-                wp_localize_script(
-                    'modula-envira-importer',
-                    'modula_envira_importer_settings',
-                    array(
-                        'ajax'                    => $ajax_url,
-                        'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one Envira Gallery to migrate.', 'modula-importer'),
-                    )
-                );
-            }
-
-            // only enqueue if Final Tiles gallery plugin is active
-            if (is_plugin_active('final-tiles-grid-gallery-lite/FinalTilesGalleryLite.php')) {
-                // scripts required for final tiles importer
-                wp_register_script('modula-final-tiles-importer', MODULA_IMPORTER_URL . 'assets/js/modula-final-tiles-importer.js', '', MODULA_IMPORTER_VERSION, true);
-                wp_enqueue_script('modula-final-tiles-importer');
-
-                // Strings added to js are used for translation
-                wp_localize_script(
-                    'modula-final-tiles-importer',
-                    'modula_ftg_importer_settings',
-                    array(
-                        'ajax'                    => $ajax_url,
-                        'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one Final Tiles Grid Gallery to migrate.', 'modula-importer'),
-                    )
-                );
-            }
-
-            // only enqueue if Gallery PhotoBlocks plugin is active
-            if (is_plugin_active('photoblocks-grid-gallery/photoblocks.php')) {
-                // scripts required for final tiles importer
-                wp_register_script('modula-photoblocks-importer', MODULA_IMPORTER_URL . 'assets/js/modula-photoblocks-importer.js', '', MODULA_IMPORTER_VERSION, true);
-                wp_enqueue_script('modula-photoblocks-importer');
-
-                // Strings added to js are used for translation
-                wp_localize_script(
-                    'modula-photoblocks-importer',
-                    'modula_pb_importer_settings',
-                    array(
-                        'ajax'                    => $ajax_url,
-                        'nonce'                   => $nonce,
-                        'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
-                        'empty_gallery_selection' => esc_html__('Please choose at least one PhotoBlocks gallery to migrate.', 'modula-importer'),
-                    )
-                );
-            }
-
-            // scripts required for wp core importer
-            wp_register_script('modula-wp-core-gallery-importer', MODULA_IMPORTER_URL . 'assets/js/modula-wp-core-gallery-importer.js', '', MODULA_IMPORTER_VERSION, true);
-            wp_enqueue_script('modula-wp-core-gallery-importer');
-
-            // Strings added to js are used for translation
-            wp_localize_script(
-                'modula-wp-core-gallery-importer',
-                'modula_wp_core_gallery_importer_settings',
-                array(
-                    'ajax'                    => $ajax_url,
-                    'nonce'                   => $nonce,
-                    'importing'               => '<span style="color:green">' . esc_html__('Migration started...', 'modula-importer') . '</span>',
-                    'empty_gallery_selection' => esc_html__('Please choose at least one gallery.', 'modula-importer'),
+                    'importing'               => '<span style="color:green">' . esc_html__(' Migration started...', 'modula-importer') . '</span>',
+                    'empty_gallery_selection' => $empty_gallery,
                 )
             );
         }
@@ -244,12 +155,10 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function add_importer_tab($tabs) {
-        if (class_exists('Modula_PRO')) {
-            $tabs['importer'] = array(
-                'label'    => esc_html__('Migrate galleries', 'modula-importer'),
-                'priority' => 50,
-            );
-        }
+        $tabs['importer'] = array(
+            'label'    => esc_html__('Migrate galleries', 'modula-importer'),
+            'priority' => 50,
+        );
 
         return $tabs;
     }
@@ -261,9 +170,7 @@ class Modula_Importer {
      * @since 1.0.0
      */
     public function render_importer_tab() {
-        if (class_exists('Modula_PRO')) {
-            include 'tabs/modula-importer-tab.php';
-        }
+        include 'tabs/modula-importer-tab.php';
     }
 
     public function uninstall_options($options_array){
@@ -279,12 +186,12 @@ class Modula_Importer {
      *
      * @since 1.0.0
      */
-    public function get_cources() {
+    public function get_sources() {
 
         global $wpdb;
         $sources = array();
 
-        // Assume there are none
+        // Assume they are none
         $envira       = false;
         $nextgen      = false;
         $final_tiles  = false;
@@ -298,40 +205,37 @@ class Modula_Importer {
         }
 
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
-            $final_tiles = $wpdb->get_results(" SELECT COUNT(id) FROM " . $wpdb->prefix . "finaltiles_gallery");
+            $final_tiles = $wpdb->get_results(" SELECT COUNT(Id) FROM " . $wpdb->prefix . "finaltiles_gallery");
         }
 
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "photoblocks'")) {
             $photoblolcks = $wpdb->get_results(" SELECT COUNT(id) FROM " . $wpdb->prefix . "photoblocks");
         }
 
-        $post_in    = "'post','page'";
-        $post_types = get_post_types(array('show_in_menu' => true, 'public' => true));
-
-        foreach ($post_types as $post_type) {
-            // exclude previous set and attachment from sql query
-            if ($post_type != 'post' && $post_type != 'page' && $post_type != 'attachment') {
-                $post_in .= ",'" . $post_type . "'";
-            }
-        }
-
-        $sql     = "SELECT COUNT(ID) FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%' AND `post_type` IN ($post_in)";
+        $sql     = "SELECT COUNT(ID) FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%'";
         $wp_core = $wpdb->get_results($sql);
 
+        // Need to get this so we can handle the object to check if mysql returned 0
+        $envira_return = (NULL != $envira) ? get_object_vars($envira[0]) : false;
+        $nextgen_return = (NULL != $nextgen) ? get_object_vars($nextgen[0]) : false;
+        $final_tiles_return = (NULL != $final_tiles) ? get_object_vars($final_tiles[0]) : false;
+        $photoblocks_return = (NULL != $photoblolcks) ? get_object_vars($photoblolcks[0]) : false;
+        $wp_core_return = (NULL != $wp_core) ? get_object_vars($wp_core[0]) : false;
+
         // Check to see if there are any entries and insert into array
-        if ($envira && NULL != $envira && !empty($envira)) {
+        if ($envira && NULL != $envira && !empty($envira) && $envira_return  && '0' != $envira_return['COUNT(ID)']) {
             $sources['envira'] = 'Envira Gallery';
         }
-        if ($nextgen && NULL != $nextgen && !empty($nextgen)) {
+        if ($nextgen && NULL != $nextgen && !empty($nextgen) && $nextgen_return && '0' != $nextgen_return['COUNT(gid)']) {
             $sources['nextgen'] = 'NextGEN Gallery';
         }
-        if ($final_tiles && NULL != $final_tiles && !empty($final_tiles)) {
+        if ($final_tiles && NULL != $final_tiles && !empty($final_tiles) && $final_tiles_return && '0' != $final_tiles_return['COUNT(Id)']) {
             $sources['final_tiles'] = 'Image Photo Gallery Final Tiles Grid';
         }
-        if ($photoblolcks && NULL != $photoblolcks && !empty($photoblolcks)) {
+        if ($photoblolcks && NULL != $photoblolcks && !empty($photoblolcks) && $photoblocks_return && '0' != $photoblocks_return['COUNT(id)']) {
             $sources['photoblocks'] = 'Gallery PhotoBlocks';
         }
-        if ($wp_core && NULL != $wp_core && !empty($wp_core)) {
+        if ($wp_core && NULL != $wp_core && !empty($wp_core) && $wp_core_return && '0' != $wp_core_return['COUNT(ID)'] ) {
             $sources['wp_core'] = 'WP Core Galleries';
         }
 
@@ -442,7 +346,7 @@ class Modula_Importer {
                      ' id="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
                      ' value="' . esc_attr($id) . '"/>';
             $html .= esc_html($title);
-            $html .= '<span style="color:blue;">';
+            $html .= '<span class="modula-importer-gallery-status">';
 
             if ($imported) {
                 $html .= '<i class="imported-check dashicons dashicons-yes"></i>';

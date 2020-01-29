@@ -157,7 +157,7 @@ class Modula_WP_Core_Gallery_Importer {
             }
         }
 
-        $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
+        $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'));
     }
 
 

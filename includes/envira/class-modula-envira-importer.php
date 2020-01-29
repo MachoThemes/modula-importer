@@ -28,6 +28,7 @@ class Modula_Envira_Importer {
 
     }
 
+
     /**
      * Get all Envira Galleries
      *
@@ -113,6 +114,10 @@ class Modula_Envira_Importer {
         }
 
         if (count($modula_images) == 0) {
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
             $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
         }
 
@@ -145,7 +150,7 @@ class Modula_Envira_Importer {
             $this->clean_entries($gallery_id);
         }
 
-        $this->modula_import_result(true, __('Migrated!', 'modula-importer'));
+        $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'));
     }
 
     /**
@@ -177,9 +182,11 @@ class Modula_Envira_Importer {
         $importer_settings['galleries']['envira'] = $galleries;
         update_option('modula_importer', $importer_settings);
 
+        // Set url for migration complete
         $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
 
         if('delete' == $_POST['clean']){
+            // Set url for migration and cleaning complete
             $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
         }
 

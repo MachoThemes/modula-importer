@@ -116,14 +116,15 @@ class Modula_Nextgen_Importer {
         }
 
         if (count($attachments) == 0) {
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
             $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
         $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
-
-        // Get nextgen settings
-        $nextgen_settings = get_option( 'ngg_options', array() );
 
         // Build Modula Gallery modula-images metadata
         $modula_images = array();
@@ -196,9 +197,11 @@ class Modula_Nextgen_Importer {
         $importer_settings['galleries']['nextgen'] = $galleries;
         update_option('modula_importer', $importer_settings);
 
+        // Set url if migration complete
         $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
 
         if('delete' == $_POST['clean']){
+            // Set url if migration and cleaning complete
             $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
         }
 
