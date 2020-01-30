@@ -57,7 +57,7 @@ class Modula_Photoblocks_Importer {
      */
     public function photoblocks_gallery_import($gallery_id = '') {
 
-        global $wpdb;
+        global $wpdb,$modula_importer;
 
         // Set max execution time so we don't timeout
         ini_set('max_execution_time', 0);
@@ -81,11 +81,7 @@ class Modula_Photoblocks_Importer {
 
         }
 
-        // Get gallery
-        $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "photoblocks
-    						WHERE id = %d LIMIT 1",
-            $gallery_id);
-        $gallery = $wpdb->get_row($sql);
+        $gallery = $modula_importer->prepare_images('photoblocks',$gallery_id);
 
         $gallery_blocks = json_decode($gallery->blocks);
         $gallery_data   = json_decode($gallery->data);

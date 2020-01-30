@@ -57,7 +57,7 @@ class Modula_Final_Tiles_Importer {
      */
     public function final_tiles_gallery_import($gallery_id = '') {
 
-        global $wpdb;
+        global $wpdb,$modula_importer;
 
         // Set max execution time so we don't timeout
         ini_set('max_execution_time', 0);
@@ -84,12 +84,6 @@ class Modula_Final_Tiles_Importer {
 
         // Seems like on some servers tables are saved lowercase
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
-            // Get images from Final Tiles
-            $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery_images
-    						WHERE gid = %d
-    						ORDER BY 'setOrder' ASC",
-                $gallery_id);
-            $images = $wpdb->get_results($sql);
 
             // Get gallery configuration
             $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery
@@ -99,12 +93,6 @@ class Modula_Final_Tiles_Importer {
         }
 
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'")) {
-            // Get images from Final Tiles
-            $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery_images
-    						WHERE gid = %d
-    						ORDER BY 'setOrder' ASC",
-                $gallery_id);
-            $images = $wpdb->get_results($sql);
 
             // Get gallery configuration
             $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery
@@ -113,6 +101,7 @@ class Modula_Final_Tiles_Importer {
             $gallery = $wpdb->get_row($sql);
         }
 
+        $images = $modula_importer->prepare_images('final_tiles',$gallery_id);
 
         $gallery_config = json_decode($gallery->configuration);
 

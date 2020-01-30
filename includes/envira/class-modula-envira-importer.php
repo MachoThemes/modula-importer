@@ -56,7 +56,7 @@ class Modula_Envira_Importer {
      */
     public function envira_gallery_import($gallery_id = '') {
 
-        global $wpdb;
+        global $wpdb,$modula_importer;
 
         // Set max execution time so we don't timeout
         ini_set('max_execution_time', 0);
@@ -84,9 +84,10 @@ class Modula_Envira_Importer {
         $modula_images = array();
 
         // get gallery data so we can get title, description and alt from envira
-        $envira_gallery_data = get_post_meta($gallery_id, '_eg_gallery_data', true);
-        if (isset($envira_gallery_data['gallery']) && count($envira_gallery_data['gallery']) > 0) {
-            foreach ($envira_gallery_data['gallery'] as $imageID => $image) {
+        $envira_gallery_data = $modula_importer->prepare_images('envira',$gallery_id);
+
+        if (isset($envira_gallery_data) && count($envira_gallery_data) > 0) {
+            foreach ($envira_gallery_data as $imageID => $image) {
 
                 $envira_image_title = (!isset($image['title']) || '' != $image['title']) ? $image['title'] : '';
 
@@ -133,7 +134,6 @@ class Modula_Envira_Importer {
 
         // Attach meta modula-settings to Modula CPT
         update_post_meta($modula_gallery_id, 'modula-settings', $modula_settings);
-
         // Attach meta modula-images to Modula CPT
         update_post_meta($modula_gallery_id, 'modula-images', $modula_images);
 

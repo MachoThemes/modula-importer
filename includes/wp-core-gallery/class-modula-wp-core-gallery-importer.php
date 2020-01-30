@@ -66,7 +66,7 @@ class Modula_WP_Core_Gallery_Importer {
      */
     public function wp_core_gallery_import($page_id = '') {
 
-        global $wpdb;
+        global $wpdb,$modula_importer;
 
         // Set max execution time so we don't timeout
         ini_set('max_execution_time', 0);
@@ -102,7 +102,7 @@ class Modula_WP_Core_Gallery_Importer {
                 $modula_images = array();
                 $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
                 $result            = preg_match($pattern, $sc, $gallery_ids);
-                $image_ids         = explode(',', $gallery_ids[1]);
+                $image_ids = $modula_importer->prepare_images('wp_core',$gallery_ids[1]);
                 $gallery_image_ids = $gallery_ids[0];
 
                 foreach ($image_ids as $image) {

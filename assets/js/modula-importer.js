@@ -497,20 +497,18 @@
                             return;
                         }
 
-                        /*modulaPhotoblocksImporter.completed = modulaPhotoblocksImporter.completed + 1;*/
 
                         // Display result from AJAX call
                         status.find('span').html(response.message);
 
                         // Remove one ajax from queue
                         modulaPhotoblocksImporter.ajaxStarted = modulaPhotoblocksImporter.ajaxStarted - 1;
+                        if(modulaPhotoblocksImporter.counts == modulaPhotoblocksImporter.completed){
+                            modulaPhotoblocksImporter.updateImported(galleries_ids,delete_entries);
+                        }
                     }
                 };
                 modulaPhotoblocksImporter.ajaxRequests.push( opts );
-
-                if(modulaPhotoblocksImporter.counts == modulaPhotoblocksImporter.completed){
-                    modulaPhotoblocksImporter.updateImported(galleries_ids,delete_entries);
-                }
                 // $.ajax(opts);
 
             });

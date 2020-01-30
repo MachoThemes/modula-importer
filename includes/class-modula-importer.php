@@ -85,7 +85,7 @@ class Modula_Importer {
         // Load admin only components.
         if (is_admin()) {
             add_action('modula_pro_updater', array($this, 'addon_updater'), 15, 2);
-            add_filter('modula_uninstall_options',array($this,'uninstall_options'),16,1);
+            add_filter('modula_uninstall_db_options',array($this,'uninstall_options'),16,1);
             add_action('wp_ajax_modula_importer_get_galleries',array($this,'get_source_galleries'));
         }
 
@@ -217,7 +217,7 @@ class Modula_Importer {
             $photoblolcks = $wpdb->get_results(" SELECT COUNT(id) FROM " . $wpdb->prefix . "photoblocks");
         }
 
-        $sql     = "SELECT COUNT(ID) FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%'";
+        $sql     = "SELECT COUNT(ID) FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%' AND `post_status` = 'publish'";
         $wp_core = $wpdb->get_results($sql);
 
         // Need to get this so we can handle the object to check if mysql returned 0
@@ -363,6 +363,78 @@ class Modula_Importer {
 
         echo $html;
         wp_die();
+    }
+
+
+    public function prepare_images($source,$data){
+
+        global $wpdb;
+        $images = array();
+        $limit = apply_filters('modula_importer_migrate_limit',20);
+
+        switch ($source){
+            case 'envira':
+                $images = get_post_meta($data, '_eg_gallery_data', true);
+                $images = array_slice($images['gallery'],0,$limit,true);
+                break;
+            case 'nextgen':
+                // Get images from NextGEN Gallery
+                $sql = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "ngg_pictures
+    						WHERE galleryid = %d
+    						ORDER BY sortorder ASC,
+    						imagedate ASC",
+                    $data);
+
+                $images = $wpdb->get_results($sql);
+                $images = array_slice($images,0,$limit,true);
+                break;
+            case 'final_tiles':
+                // Seems like on some servers tables are saved lowercase
+                if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
+                    // Get images from Final Tiles
+                    $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery_images
+    						WHERE gid = %d
+    						ORDER BY 'setOrder' ASC",
+                        $data);
+                    $images = $wpdb->get_results($sql);
+                    $images = array_slice($images,0,$limit,true);
+                }
+
+                if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'")) {
+                    // Get images from Final Tiles
+                    $sql    = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery_images
+    						WHERE gid = %d
+    						ORDER BY 'setOrder' ASC",
+                        $data);
+                    $images = $wpdb->get_results($sql);
+                    $images = array_slice($images,0,$limit,true);
+                }
+                break;
+            case 'photoblocks':
+                // Get gallery
+                $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "photoblocks
+    						WHERE id = %d LIMIT 1",
+                    $data);
+                $gallery = $wpdb->get_row($sql);
+                $blocks = json_decode($gallery->blocks);
+                $blocks = array_slice($blocks,0,$limit,true);
+                $gallery->blocks = json_encode($blocks);
+                $images = $gallery;
+
+                break;
+            case 'wp_core':
+                $images         = explode(',', $data);
+                $images = array_slice($images,0,$limit,true);
+                break;
+
+        }
+
+        if($images){
+            return $images;
+        }
+
+        return false;
+
     }
 
     /**
