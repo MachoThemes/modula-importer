@@ -337,7 +337,7 @@ class Modula_Importer {
                 case 'wp_core':
                     $id    = $gallery->ID;
                     $title = $gallery->post_title;
-                    $count = $gal_source->images_count($gallery->id);
+                    $count = $gal_source->images_count($gallery->ID);
                     break;
                 default:
                     if (isset($import_settings['galleries'][$source]) && in_array($gallery->id, $import_settings['galleries'][$source])) {
@@ -358,7 +358,7 @@ class Modula_Importer {
             $html .= esc_html($title) . ' ( ' . esc_html($count) . esc_html__(' image(s) )', 'modula-importer');
 
             // Display text on LITE. On PRO version
-            $lite = esc_html__(' -> Modula LITE (20 images max)', 'modula-importer');
+            $lite = esc_html__(' -> Modula LITE (20 images max).', 'modula-importer');
             $html .= apply_filters('modula_lite_migration_text', $lite);
 
             $html .= '<span class="modula-importer-gallery-status">';

@@ -38,13 +38,18 @@ class Modula_Final_Tiles_Importer {
     public function get_galleries() {
 
         global $wpdb;
-        if(!$wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."finaltiles_gallery'")){
-            return false;
+        if($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."finaltiles_gallery'")){
+            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
+            if (count($galleries) != 0) {
+                return $galleries;
+            }
         }
 
-        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "finaltiles_gallery");
-        if (count($galleries) != 0) {
-            return $galleries;
+        if($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."FinalTiles_gallery'")){
+            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery");
+            if (count($galleries) != 0) {
+                return $galleries;
+            }
         }
 
         return false;

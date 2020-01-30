@@ -21,3 +21,17 @@
 .modula-importer-gallery-status {
     color:blue;
 }
+
+.modula-importer-upsell-wrapper {
+    background:#fff;
+    border:1px solid #dddddd;
+    padding:15px;
+    margin-bottom:25px;
+}
+
+.modula-importer-upsell-wrapper .modula-importer-upsell-buttons {
+    margin-top:25px;
+}
+.modula-importer-upsell-wrapper .modula-importer-upsell-buttons a {
+    margin-right:15px;
+}

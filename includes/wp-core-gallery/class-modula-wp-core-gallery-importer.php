@@ -68,7 +68,7 @@ class Modula_WP_Core_Gallery_Importer {
      */
     public function images_count($id){
 
-        $post          = get_post($page_id);
+        $post          = get_post($id);
         $content       = $post->post_content;
         $search_string = '[gallery';
         $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
@@ -76,13 +76,14 @@ class Modula_WP_Core_Gallery_Importer {
 
         if ($result && $result > 0) {
             foreach ($matches[0] as $sc) {
+                $modula_images = array();
                 $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
-                //$result            = preg_match($pattern, $sc, $gallery_ids);
-                $image_ids         = $modula_importer->prepare_images('wp_core', $gallery_ids[1]);
+                $result            = preg_match($pattern, $sc, $gallery_ids);
+                $images = explode(',',$gallery_ids[1]);
             }
         }
 
-        $count = count($image_ids);
+        $count = count($images);
 
         return $count;
     }

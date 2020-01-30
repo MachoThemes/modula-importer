@@ -117,15 +117,19 @@ if ($sources) {
                         </th>
                         <td>
                             <div>
-                                <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
-
                                 <?php
-                                $link = '<a href="https://wp-modula.com/pricing/?utm_source=modula-importer&utm_campaign=upsell" class="button button-secondary" target="_blank">'.esc_html__('Upgrade to PRO','modula-importer').'</a>';
-                                $upsell = apply_filters('modula_importer_upsells',$link);
+                                $upsell = '<div class="modula-importer-upsell-wrapper">';
+                                $upsell .= esc_html__('By upgrading to the PRO version of Modula, you can remove the 20 images/gallery limit. includes several extensions.', 'modula-importer');
+                                $upsell .= '<div class="modula-importer-upsell-buttons">';
+                                $upsell .= '<a href="https://wp-modula.com/pricing/?utm_source=modula-lite&utm_campaign=litevspro#lite-vs-pro" class="button button-secondary" target="_blank">' . esc_html__('LITE vs PRO', 'modula-importer') . '</a>';
+                                $upsell .= '<a href="https://wp-modula.com/pricing/?utm_source=modula-importer&utm_campaign=upsell" class="button button-primary" target="_blank">' . esc_html__('Upgrade to PRO', 'modula-importer') . '</a>';
+                                $upsell .= '</div> </div>';
+
+                                $upsell = apply_filters('modula_importer_upsells', $upsell);
 
                                 echo $upsell;
                                 ?>
-
+                                <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
                             </div>
                         </td>
                     </tr>

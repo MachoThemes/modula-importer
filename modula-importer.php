@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Modula Importer
+ * Plugin Name: Modula Migrate
  * Plugin URI: https://wp-modula.com/
- * Description: Plugin used to import other galleries into Modula Gallery.
+ * Description: Plugin used to migrate other galleries into Modula Gallery.
  * Author: Macho Themes
  * Version: 1.0.0
  * URI: https://www.machothemes.com/

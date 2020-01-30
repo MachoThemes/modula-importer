@@ -154,11 +154,18 @@ class Modula_Envira_Importer {
         update_post_meta($modula_gallery_id, 'modula-images', $modula_images);
 
         $envira_shortcodes = '[envira-gallery id="' . $gallery_id . '"]';
+        $envira_slug = get_post_field('post_name',$gallery_id);
+        $envira_slug_shortcode = '[envira-gallery slug="' . $envira_slug . '"]';
         $modula_shortcode  = '[modula id="' . $modula_gallery_id . '"]';
 
-        // Replace Envira shortcode with Modula Shortcode in Posts, Pages and CPTs
+        // Replace Envira id shortcode with Modula Shortcode in Posts, Pages and CPTs
         $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
             $envira_shortcodes, $modula_shortcode);
+        $wpdb->query($sql);
+
+        // Replace Envira slug shortcode with Modula Shortcode in Posts, Pages and CPTs
+        $sql = $wpdb->prepare("UPDATE " . $wpdb->prefix . "posts SET post_content = REPLACE(post_content, '%s', '%s')",
+            $envira_slug_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
         // Trigger delete function if option is set to delete
