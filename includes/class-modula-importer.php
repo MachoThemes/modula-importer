@@ -306,6 +306,7 @@ class Modula_Importer {
                     }
                     $id    = $gallery->ID;
                     $title = $gallery->post_title;
+                    $count = $gal_source->images_count($gallery->ID);
                     break;
                 case 'final_tiles' :
                     if (isset($import_settings['galleries']['final_tiles']) && in_array($gallery->Id, $import_settings['galleries']['final_tiles'])) {
@@ -314,6 +315,7 @@ class Modula_Importer {
                     $id         = $gallery->Id;
                     $ftg_config = json_decode($gallery->configuration);
                     $title      = $ftg_config->name;
+                    $count = $gal_source->images_count($gallery->Id);
                     break;
                 case 'nextgen':
                     if (isset($import_settings['galleries']['nextgen']) && in_array($gallery->gid, $import_settings['galleries']['nextgen'])) {
@@ -321,6 +323,7 @@ class Modula_Importer {
                     }
                     $id    = $gallery->gid;
                     $title = $gallery->title;
+                    $count = $gal_source->images_count($gallery->gid);
                     break;
                 case
                 'photoblocks':
@@ -329,10 +332,12 @@ class Modula_Importer {
                     }
                     $id    = $gallery->id;
                     $title = $gallery->name;
+                    $count = $gal_source->images_count($gallery->id);
                     break;
                 case 'wp_core':
                     $id    = $gallery->ID;
                     $title = $gallery->post_title;
+                    $count = $gal_source->images_count($gallery->id);
                     break;
                 default:
                     if (isset($import_settings['galleries'][$source]) && in_array($gallery->id, $import_settings['galleries'][$source])) {
@@ -350,7 +355,7 @@ class Modula_Importer {
                      '<input type="checkbox" name="gallery"' .
                      ' id="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
                      ' value="' . esc_attr($id) . '"/>';
-            $html .= esc_html($title);
+            $html .= esc_html($title) .' ( '. esc_html($count). esc_html__(' image(s) ) -> Modula LITE (20 images max)','modula-importer');
             $html .= '<span class="modula-importer-gallery-status">';
 
             if ($imported) {
@@ -420,7 +425,6 @@ class Modula_Importer {
                 $blocks = array_slice($blocks,0,$limit,true);
                 $gallery->blocks = json_encode($blocks);
                 $images = $gallery;
-
                 break;
             case 'wp_core':
                 $images         = explode(',', $data);

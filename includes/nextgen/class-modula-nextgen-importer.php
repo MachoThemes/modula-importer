@@ -50,6 +50,29 @@ class Modula_Nextgen_Importer {
         return false;
     }
 
+
+    /**
+     * Get gallery image count
+     *
+     * @since 1.0.0
+     * @param $id
+     * @return int
+     */
+    public function images_count($id){
+        global $wpdb;
+
+        $sql = $wpdb->prepare("SELECT COUNT(pid) FROM " . $wpdb->prefix . "ngg_pictures
+    						WHERE galleryid = %d ",
+            $id);
+
+        $images = $wpdb->get_results($sql);
+        $count = get_object_vars($images[0]);
+        $count = $count['COUNT(pid)'];
+
+        return $count;
+    }
+
+
     /**
      * Imports a gallery from NextGEN into Modula
      *

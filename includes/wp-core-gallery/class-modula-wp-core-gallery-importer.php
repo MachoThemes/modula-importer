@@ -60,6 +60,35 @@ class Modula_WP_Core_Gallery_Importer {
 
 
     /**
+     * Get gallery image count
+     *
+     * @since 1.0.0
+     * @param $id
+     * @return int
+     */
+    public function images_count($id){
+
+        $post          = get_post($page_id);
+        $content       = $post->post_content;
+        $search_string = '[gallery';
+        $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
+        $result        = preg_match_all($pattern, $content, $matches);
+
+        if ($result && $result > 0) {
+            foreach ($matches[0] as $sc) {
+                $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
+                //$result            = preg_match($pattern, $sc, $gallery_ids);
+                $image_ids         = $modula_importer->prepare_images('wp_core', $gallery_ids[1]);
+            }
+        }
+
+        $count = count($image_ids);
+
+        return $count;
+    }
+
+
+    /**
      * Replace WP Core gallery and create Modula gallery
      *
      * @since 1.0.0

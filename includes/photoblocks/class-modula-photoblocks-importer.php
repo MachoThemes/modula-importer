@@ -50,6 +50,28 @@ class Modula_Photoblocks_Importer {
         return false;
     }
 
+
+    /**
+     * Get gallery image count
+     *
+     * @since 1.0.0
+     * @param $id
+     * @return int
+     */
+    public function images_count($id){
+        global $wpdb;
+
+        $sql     = $wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "photoblocks
+    						WHERE id = %d LIMIT 1",
+            $id);
+        $gallery = $wpdb->get_row($sql);
+        $blocks = json_decode($gallery->blocks);
+        $count = count($blocks);
+
+        return $count;
+    }
+
+
     /**
      * Imports a gallery from PhotoBlocks into Modula
      *

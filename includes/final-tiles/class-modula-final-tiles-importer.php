@@ -50,6 +50,39 @@ class Modula_Final_Tiles_Importer {
         return false;
     }
 
+
+    /**
+     * Get gallery image count
+     *
+     * @since 1.0.0
+     * @param $id
+     * @return int
+     */
+    public function images_count($id){
+        global $wpdb;
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {
+            // Get images from Final Tiles
+            $sql    = $wpdb->prepare("SELECT COUNT(Id) FROM " . $wpdb->prefix . "finaltiles_gallery_images
+    						WHERE gid = %d ",
+                $id);
+            $images = $wpdb->get_results($sql);
+        }
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'")) {
+            // Get images from Final Tiles
+            $sql    = $wpdb->prepare("SELECT COUNT(Id) FROM " . $wpdb->prefix . "FinalTiles_gallery_images
+    						WHERE gid = %d",
+                $id);
+            $images = $wpdb->get_results($sql);
+        }
+
+        $count = get_object_vars($images[0]);
+        $count = $count['COUNT(Id)'];
+
+        return $count;
+    }
+
+
     /**
      * Imports a gallery from Final Tiles into Modula
      *

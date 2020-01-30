@@ -49,6 +49,22 @@ class Modula_Envira_Importer {
         return false;
     }
 
+
+    /**
+     * Get gallery image count
+     *
+     * @since 1.0.0
+     * @param $id
+     * @return int
+     */
+    public function images_count($id){
+
+        $images = get_post_meta($id, '_eg_gallery_data', true);
+        $count = count($images['gallery']);
+
+        return $count;
+    }
+
     /**
      * Imports a gallery from Envira into Modula
      *
