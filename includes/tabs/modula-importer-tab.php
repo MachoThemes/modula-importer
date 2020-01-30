@@ -118,6 +118,14 @@ if ($sources) {
                         <td>
                             <div>
                                 <?php submit_button(__('Migrate', 'modula-importer'), 'primary', 'modula-importer-submit-' . $source, false); ?>
+
+                                <?php
+                                $link = '<a href="https://wp-modula.com/pricing/?utm_source=modula-importer&utm_campaign=upsell" class="button button-secondary" target="_blank">'.esc_html__('Upgrade to PRO','modula-importer').'</a>';
+                                $upsell = apply_filters('modula_importer_upsells',$link);
+
+                                echo $upsell;
+                                ?>
+
                             </div>
                         </td>
                     </tr>

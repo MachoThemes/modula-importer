@@ -355,7 +355,12 @@ class Modula_Importer {
                      '<input type="checkbox" name="gallery"' .
                      ' id="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
                      ' value="' . esc_attr($id) . '"/>';
-            $html .= esc_html($title) .' ( '. esc_html($count). esc_html__(' image(s) ) -> Modula LITE (20 images max)','modula-importer');
+            $html .= esc_html($title) . ' ( ' . esc_html($count) . esc_html__(' image(s) )', 'modula-importer');
+
+            // Display text on LITE. On PRO version
+            $lite = esc_html__(' -> Modula LITE (20 images max)', 'modula-importer');
+            $html .= apply_filters('modula_lite_migration_text', $lite);
+
             $html .= '<span class="modula-importer-gallery-status">';
 
             if ($imported) {
