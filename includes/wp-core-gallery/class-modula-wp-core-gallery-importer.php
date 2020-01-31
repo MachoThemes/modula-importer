@@ -53,20 +53,28 @@ class Modula_WP_Core_Gallery_Importer {
         $galleries = $wpdb->get_results($sql);
 
         if (count($galleries) != 0) {
-            foreach($galleries as $key=>$gallery){
-                $count = $this->images_count($gallery->ID);
+            foreach($galleries as $gallery){
+                $content       = $gallery->post_content;
+                $search_string = '[gallery';
+                $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
+                $result        = preg_match_all($pattern, $content, $matches);
 
-                if($count == 0){
-                    unset($galleries[$key]);
-                    $empty_galleries[$key] = $gallery;
+                if ($result && $result > 0) {
+                    foreach ($matches[0] as $sc) {
+                        $modula_images = array();
+                        $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
+                        $result            = preg_match($pattern, $sc, $gallery_ids);
+                        $images = ($gallery_ids[1] && NULL != $gallery_ids[1]) ? explode(',',$gallery_ids[1]) :false;
+
+                        if ($images && count($images) != 0) {
+                            $core_gal[$gallery->ID][] = $gallery->post_title;
+                        }
+                    }
                 }
             }
 
-            if (count($galleries) != 0) {
-                $return_galleries['valid_galleries'] = $galleries;
-            }
-            if (count($empty_galleries) != 0) {
-                $return_galleries['empty_galleries'] = $empty_galleries;
+            if (count($core_gal) != 0) {
+                $return_galleries['valid_galleries'] = $core_gal;
             }
 
             if (count($return_galleries) != 0) {

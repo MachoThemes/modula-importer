@@ -2,7 +2,8 @@
 .modula .select-all-wrapper.hide,
 .modula label[data-id="delete-old-entries"].hide,
 .modula input[type="submit"].hide,
-.modula .select-all-checkbox.hide{
+.modula .select-all-checkbox.hide,
+.modula .select-all-checkbox-wrapper.hide{
     display: none;
 }
 

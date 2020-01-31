@@ -298,7 +298,7 @@ class Modula_Importer {
             wp_die();
         }
 
-        foreach ($galleries['valid_galleries'] as $gallery) {
+        foreach ($galleries['valid_galleries'] as $key => $gallery) {
             $imported = false;
             switch ($source) {
                 case 'envira':
@@ -336,8 +336,8 @@ class Modula_Importer {
                     $count = $gal_source->images_count($gallery->id);
                     break;
                 case 'wp_core':
-                    $id    = $gallery->ID;
-                    $title = '<a href="' . admin_url('/post.php?post=' . $gallery->ID . '&action=edit') . '" target="_blank">' . esc_html($gallery->post_title) . '</a>';
+                    $id    = $key;
+                    $title = '<a href="' . admin_url('/post.php?post=' . $id. '&action=edit') . '" target="_blank">' . esc_html($gallery[0]) . '</a>';
                     $count = $gal_source->images_count($gallery->ID);
                     break;
                 default:

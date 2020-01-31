@@ -102,7 +102,7 @@ if ($sources) {
                         <td>
                             <div class="modula-importer-checkbox-wrapper">
                                 <label for="select-galleries-<?php echo esc_attr($source); ?>"
-                                       data-id="select-all-<?php echo esc_attr($source); ?>" class="select-all-checkbox">
+                                       data-id="select-all-<?php echo esc_attr($source); ?>" class="select-all-checkbox-wrapper">
                                     <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
                                            id="select-all-<?php echo esc_attr($source); ?>"
                                            value="" class="select-all-checkbox"/>
