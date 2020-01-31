@@ -38,6 +38,8 @@ class Modula_Nextgen_Importer {
     public function get_galleries() {
 
         global $wpdb;
+        $empty_galleries = array();
+
         if(!$wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix . "ngg_gallery'")){
             return false;
         }
@@ -49,11 +51,19 @@ class Modula_Nextgen_Importer {
 
                 if ($count == 0) {
                     unset($galleries[$key]);
+                    $empty_galleries[$key] = $gallery;
                 }
             }
 
             if (count($galleries) != 0) {
-                return $galleries;
+                $return_galleries['valid_galleries'] = $galleries;
+            }
+            if (count($empty_galleries) != 0) {
+                $return_galleries['empty_galleries'] = $empty_galleries;
+            }
+
+            if (count($return_galleries) != 0) {
+                return $return_galleries;
             }
         }
 

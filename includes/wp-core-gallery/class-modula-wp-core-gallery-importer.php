@@ -37,6 +37,7 @@ class Modula_WP_Core_Gallery_Importer {
     public function get_galleries() {
 
         global $wpdb;
+        $empty_galleries = array();
 
         $post_in   = "'post','page'";
         $post_types = get_post_types(array('show_in_menu' => true,'public'=>true));
@@ -57,11 +58,19 @@ class Modula_WP_Core_Gallery_Importer {
 
                 if($count == 0){
                     unset($galleries[$key]);
+                    $empty_galleries[$key] = $gallery;
                 }
             }
 
-            if(count($galleries) != 0 ){
-                return $galleries;
+            if (count($galleries) != 0) {
+                $return_galleries['valid_galleries'] = $galleries;
+            }
+            if (count($empty_galleries) != 0) {
+                $return_galleries['empty_galleries'] = $empty_galleries;
+            }
+
+            if (count($return_galleries) != 0) {
+                return $return_galleries;
             }
         }
 

@@ -290,14 +290,15 @@ class Modula_Importer {
                 break;
         }
 
+
         // Although this isn't necessary, sources have been checked before in tab
         // it is best if we do another check, just to be sure.
-        if (!$galleries || empty($galleries)) {
-            echo esc_html__('There are no galleries present that can be imported!','modula-importer');
+        if (!isset($galleries['valid_galleries']) && isset($galleries['empty_galleries']) && count($galleries['empty_galleries']) > 0) {
+            printf(esc_html__('While we’ve found %s gallery(ies) we could import , we were unable to find any images associated with it(them). There’s no content for us to import .','modula-importer'),count($galleries['empty_galleries']));
             wp_die();
         }
 
-        foreach ($galleries as $gallery) {
+        foreach ($galleries['valid_galleries'] as $gallery) {
             $imported = false;
             switch ($source) {
                 case 'envira':

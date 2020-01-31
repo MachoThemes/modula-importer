@@ -40,19 +40,28 @@ class Modula_Envira_Importer {
 
         global $wpdb;
 
-        $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type = 'envira' AND post_status = 'publish'");
+        $galleries       = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "posts WHERE post_type = 'envira' AND post_status = 'publish'");
+        $empty_galleries = array();
 
         if (count($galleries) != 0) {
-            foreach($galleries as $key=>$gallery){
+            foreach ($galleries as $key => $gallery) {
                 $count = $this->images_count($gallery->ID);
 
-                if($count == 0){
+                if ($count == 0) {
                     unset($galleries[$key]);
+                    $empty_galleries[$key] = $gallery;
                 }
             }
 
-            if(count($galleries) != 0){
-                return $galleries;
+            if (count($galleries) != 0) {
+                $return_galleries['valid_galleries'] = $galleries;
+            }
+            if (count($empty_galleries) != 0) {
+                $return_galleries['empty_galleries'] = $empty_galleries;
+            }
+
+            if (count($return_galleries) != 0) {
+                return $return_galleries;
             }
         }
 
