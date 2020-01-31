@@ -44,7 +44,17 @@ class Modula_Nextgen_Importer {
 
         $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "ngg_gallery");
         if (count($galleries) != 0) {
-            return $galleries;
+            foreach ($galleries as $key => $gallery) {
+                $count = $this->images_count($gallery->gid);
+
+                if ($count == 0) {
+                    unset($galleries[$key]);
+                }
+            }
+
+            if (count($galleries) != 0) {
+                return $galleries;
+            }
         }
 
         return false;

@@ -62,10 +62,10 @@ $sources = apply_filters('modula_importable_galleries', $sources);
                 <td>
                     <div>
                         <label for="delete-old-entries"
-                               data-id="delete-old-entries">
+                               data-id="delete-old-entries" >
                             <input type="checkbox" name="delete-old-entries"
                                    id="delete-old-entries"
-                                   value=""/>
+                                   value="" />
                             <?php echo esc_html__('Delete old gallery entries.', 'modula-importer'); ?>
                         </label>
                     </div>
@@ -102,7 +102,7 @@ if ($sources) {
                         <td>
                             <div class="modula-importer-checkbox-wrapper">
                                 <label for="select-galleries-<?php echo esc_attr($source); ?>"
-                                       data-id="select-all-<?php echo esc_attr($source); ?>">
+                                       data-id="select-all-<?php echo esc_attr($source); ?>" class="select-all-checkbox">
                                     <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
                                            id="select-all-<?php echo esc_attr($source); ?>"
                                            value="" class="select-all-checkbox"/>

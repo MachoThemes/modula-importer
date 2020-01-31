@@ -51,11 +51,21 @@ class Modula_WP_Core_Gallery_Importer {
         $sql       = "SELECT * FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%[galler%' AND `post_type` IN ($post_in)";
         $galleries = $wpdb->get_results($sql);
 
-        if (count($galleries) == 0) {
-            return false;
+        if (count($galleries) != 0) {
+            foreach($galleries as $key=>$gallery){
+                $count = $this->images_count($gallery->ID);
+
+                if($count == 0){
+                    unset($galleries[$key]);
+                }
+            }
+
+            if(count($galleries) != 0 ){
+                return $galleries;
+            }
         }
 
-        return $galleries;
+        return false;
     }
 
 
@@ -79,11 +89,11 @@ class Modula_WP_Core_Gallery_Importer {
                 $modula_images = array();
                 $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
                 $result            = preg_match($pattern, $sc, $gallery_ids);
-                $images = explode(',',$gallery_ids[1]);
+                $images = ($gallery_ids[1] && NULL != $gallery_ids[1]) ? explode(',',$gallery_ids[1]) :false;
             }
         }
 
-        $count = count($images);
+        $count = ($images) ? count($images) : false;
 
         return $count;
     }

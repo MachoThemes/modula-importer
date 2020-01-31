@@ -1,5 +1,8 @@
 .modula .modula-importer-row.hide,
-.modula .select-all-wrapper.hide{
+.modula .select-all-wrapper.hide,
+.modula label[data-id="delete-old-entries"].hide,
+.modula input[type="submit"].hide,
+.modula .select-all-checkbox.hide{
     display: none;
 }
 

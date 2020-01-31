@@ -693,10 +693,11 @@
                 $('#modula-' + targetID + '-importer').removeClass('hide');
                 $('#modula-' + targetID + '-importer').find('.modula-found-galleries').html(response);
                 $('.modula-importer-row').not($('#modula-' + targetID + '-importer')).addClass('hide');
-
-                if ('none' != targetID) {
+                if ('none' != targetID && $('#modula-' + targetID + '-importer').find('input[type="checkbox"]').not('#select-all-'+targetID).length > 0) {
                     $('.select-all-wrapper').removeClass('hide');
                 } else {
+                    $('#modula-' + targetID + '-importer .select-all-checkbox').addClass('hide');
+                    $('#modula-' + targetID + '-importer').find('input[type="submit"]').addClass('hide');
                     $('.select-all-wrapper').addClass('hide');
                 }
             });

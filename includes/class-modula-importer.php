@@ -292,8 +292,8 @@ class Modula_Importer {
 
         // Although this isn't necessary, sources have been checked before in tab
         // it is best if we do another check, just to be sure.
-        if (empty($galleries)) {
-            echo esc_html__('There are no galleries present');
+        if (!$galleries || empty($galleries)) {
+            echo esc_html__('There are no galleries present that can be imported!','modula-importer');
             wp_die();
         }
 

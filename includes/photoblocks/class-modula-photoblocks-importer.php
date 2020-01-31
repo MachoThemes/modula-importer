@@ -44,7 +44,17 @@ class Modula_Photoblocks_Importer {
         }
         $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "photoblocks");
         if (count($galleries) != 0) {
-            return $galleries;
+            foreach ($galleries as $key => $gallery) {
+                $count = $this->images_count($gallery->id);
+
+                if ($count == 0) {
+                    unset($galleries[$key]);
+                }
+            }
+
+            if (count($galleries) != 0) {
+                return $galleries;
+            }
         }
 
         return false;
