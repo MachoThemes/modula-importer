@@ -305,7 +305,7 @@ class Modula_Importer {
                         $imported = true;
                     }
                     $id    = $gallery->ID;
-                    $title = $gallery->post_title;
+                    $title = '<a href="' . admin_url('/post.php?post=' . $gallery->ID . '&action=edit') . '" target="_blank">' . esc_html($gallery->post_title) . '</a>';
                     $count = $gal_source->images_count($gallery->ID);
                     break;
                 case 'final_tiles' :
@@ -314,15 +314,15 @@ class Modula_Importer {
                     }
                     $id         = $gallery->Id;
                     $ftg_config = json_decode($gallery->configuration);
-                    $title      = $ftg_config->name;
-                    $count = $gal_source->images_count($gallery->Id);
+                    $title      = '<a href="' . admin_url('admin.php?page=ftg-lite-gallery-admin&id=' . $gallery->Id) . '" target="_blank"> ' . esc_html($ftg_config->name) . '</a>';
+                    $count      = $gal_source->images_count($gallery->Id);
                     break;
                 case 'nextgen':
                     if (isset($import_settings['galleries']['nextgen']) && in_array($gallery->gid, $import_settings['galleries']['nextgen'])) {
                         $imported = true;
                     }
                     $id    = $gallery->gid;
-                    $title = $gallery->title;
+                    $title = '<a href="' . wp_nonce_url(admin_url('admin.php?page=nggallery-manage-gallery&amp;mode=edit&amp;gid=' . $gallery->gid)) . '" target="_blank">' . esc_html($gallery->title) . '</a>';
                     $count = $gal_source->images_count($gallery->gid);
                     break;
                 case
@@ -331,12 +331,12 @@ class Modula_Importer {
                         $imported = true;
                     }
                     $id    = $gallery->id;
-                    $title = $gallery->name;
+                    $title = '<a href="' . admin_url('admin.php?page=photoblocks-edit&id=' . $gallery->id) . '" target="_blank"> ' . esc_html($gallery->name) . '</a>';
                     $count = $gal_source->images_count($gallery->id);
                     break;
                 case 'wp_core':
                     $id    = $gallery->ID;
-                    $title = $gallery->post_title;
+                    $title = '<a href="' . admin_url('/post.php?post=' . $gallery->ID . '&action=edit') . '" target="_blank">' . esc_html($gallery->post_title) . '</a>';
                     $count = $gal_source->images_count($gallery->ID);
                     break;
                 default:
@@ -355,7 +355,7 @@ class Modula_Importer {
                      '<input type="checkbox" name="gallery"' .
                      ' id="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
                      ' value="' . esc_attr($id) . '"/>';
-            $html .= esc_html($title) . ' ( ' . esc_html($count) . esc_html__(' image(s) )', 'modula-importer');
+            $html .= $title . ' ( ' . esc_html($count) . esc_html__(' image(s) )', 'modula-importer');
 
             // Display text on LITE. On PRO version
             $lite = esc_html__(' -> Modula LITE (20 images max).', 'modula-importer');
