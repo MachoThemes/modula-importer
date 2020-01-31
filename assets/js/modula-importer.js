@@ -696,6 +696,7 @@
                 if ('none' != targetID && $('#modula-' + targetID + '-importer').find('input[type="checkbox"]').not('#select-all-'+targetID).length > 0) {
                     $('.select-all-wrapper').removeClass('hide');
                 } else {
+                    $('#modula-' + targetID + '-importer .modula-importer-upsell-wrapper').addClass('hide');
                     $('#modula-' + targetID + '-importer .select-all-checkbox,#modula-' + targetID + '-importer .select-all-checkbox-wrapper').addClass('hide');
                     $('#modula-' + targetID + '-importer').find('input[type="submit"]').addClass('hide');
                     $('.select-all-wrapper').addClass('hide');

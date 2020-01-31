@@ -3,7 +3,8 @@
 .modula label[data-id="delete-old-entries"].hide,
 .modula input[type="submit"].hide,
 .modula .select-all-checkbox.hide,
-.modula .select-all-checkbox-wrapper.hide{
+.modula .select-all-checkbox-wrapper.hide,
+.modula-importer-upsell-wrapper.hide{
     display: none;
 }
 
