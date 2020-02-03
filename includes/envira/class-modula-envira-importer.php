@@ -115,6 +115,17 @@ class Modula_Envira_Importer {
 
         }
 
+        $imported_galleries = get_option('modula_importer');
+        // If already migrated don't migrate
+        if(isset($imported_galleries['galleries']['envira']) && in_array($gallery_id,$imported_galleries['galleries']['envira'])){
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
+            $this->modula_import_result(false, __('Gallery already migrated!', 'modula-importer'));
+        }
+
+
         // Get all images attached to the gallery
         $modula_images = array();
 

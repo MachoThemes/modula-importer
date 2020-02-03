@@ -124,6 +124,16 @@ class Modula_Nextgen_Importer {
 
         }
 
+        $imported_galleries = get_option('modula_importer');
+        // If already migrated don't migrate
+        if(isset($imported_galleries['galleries']['nextgen']) && in_array($gallery_id,$imported_galleries['galleries']['nextgen'])){
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
+            $this->modula_import_result(false, __('Gallery already migrated!', 'modula-importer'));
+        }
+
         // Get image path
         $sql     = $wpdb->prepare("SELECT path, title, galdesc, pageid 
     						FROM " . $wpdb->prefix . "ngg_gallery

@@ -381,7 +381,8 @@ class Modula_Importer {
 
         global $wpdb;
         $images = array();
-        $limit = apply_filters('modula_importer_migrate_limit',20);
+        $limit = '20';
+        $limit = (int)apply_filters('modula_importer_migrate_limit',$limit);
 
         switch ($source){
             case 'envira':

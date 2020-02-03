@@ -149,6 +149,15 @@ class Modula_Final_Tiles_Importer {
 
         }
 
+        $imported_galleries = get_option('modula_importer');
+        // If already migrated don't migrate
+        if(isset($imported_galleries['galleries']['final_tiles']) && in_array($gallery_id,$imported_galleries['galleries']['final_tiles'])){
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
+            $this->modula_import_result(false, __('Gallery already migrated!', 'modula-importer'));
+        }
 
         // Seems like on some servers tables are saved lowercase
         if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'")) {

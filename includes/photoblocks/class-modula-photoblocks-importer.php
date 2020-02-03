@@ -122,6 +122,16 @@ class Modula_Photoblocks_Importer {
 
         }
 
+        $imported_galleries = get_option('modula_importer');
+        // If already migrated don't migrate
+        if(isset($imported_galleries['galleries']['photoblocks']) && in_array($gallery_id,$imported_galleries['galleries']['photoblocks'])){
+            // Trigger delete function if option is set to delete
+            if('delete' == $_POST['clean']){
+                $this->clean_entries($gallery_id);
+            }
+            $this->modula_import_result(false, __('Gallery already migrated!', 'modula-importer'));
+        }
+
         $gallery = $modula_importer->prepare_images('photoblocks',$gallery_id);
 
         $gallery_blocks = json_decode($gallery->blocks);
