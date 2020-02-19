@@ -53,22 +53,27 @@ class Modula_WP_Core_Gallery_Importer {
         $galleries = $wpdb->get_results($sql);
 
         if (count($galleries) != 0) {
+            $i = 1;
             foreach($galleries as $gallery){
                 $content       = $gallery->post_content;
                 $search_string = '[gallery';
                 $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
                 $result        = preg_match_all($pattern, $content, $matches);
 
-                if ($result && $result > 0) {
-                    foreach ($matches[0] as $sc) {
-                        $modula_images = array();
-                        $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
-                        $result            = preg_match($pattern, $sc, $gallery_ids);
-                        $images = ($gallery_ids[1] && NULL != $gallery_ids[1]) ? explode(',',$gallery_ids[1]) :false;
+                if ( $result && $result > 0 ) {
+                    foreach ( $matches[0] as $sc ) {
 
-                        if ($images && count($images) != 0) {
-                            $core_gal[$gallery->ID][] = $gallery->post_title;
+                        $modula_images = array();
+                        $pattern       = '/ids\s*=\s*\"([\s\S]*?)\"/';
+                        $result        = preg_match( $pattern, $sc, $gallery_ids );
+                        $images        = ( $gallery_ids[1] && NULL != $gallery_ids[1] ) ? explode( ',', $gallery_ids[1] ) : false;
+                        if ( $images && count( $images ) != 0 ) {
+                            $core_gal[ $i ]['title']     = '#' . $i . ' from ' . $gallery->post_title;
+                            $core_gal[ $i ]['shortcode'] = $sc;
+                            $core_gal[ $i ]['images']    = count( $images );
+                            $core_gal[ $i ]['page_id']   = $gallery->ID;
                         }
+                        $i++;
                     }
                 }
             }
@@ -81,6 +86,7 @@ class Modula_WP_Core_Gallery_Importer {
                 return $return_galleries;
             }
         }
+
 
         return false;
     }
@@ -121,7 +127,7 @@ class Modula_WP_Core_Gallery_Importer {
      *
      * @since 1.0.0
      */
-    public function wp_core_gallery_import($page_id = '') {
+    public function wp_core_gallery_import($page_id = array()) {
 
         global $wpdb,$modula_importer;
 

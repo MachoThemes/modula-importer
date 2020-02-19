@@ -585,7 +585,7 @@
                 // Get array of IDs
                 var id_array = [];
                 $(galleries).each(function (i) {
-                    id_array[i] = $(this).val();
+                    id_array[i] = $(this).attr('data-id');
                 });
 
                 modulaWPCoreImporter.counts = id_array.length + 1;
@@ -605,6 +605,8 @@
 
             galleries_ids.forEach( function( gallery_id ){
 
+                //@todo: change status to value, as we need to search for shortcodes content and not pages
+                //@todo: we will send json as id for ajax
                 var status = $('#modula_importer_wp_core label[data-id=' + gallery_id + ']');
 
                 $(status).removeClass().addClass('importing');

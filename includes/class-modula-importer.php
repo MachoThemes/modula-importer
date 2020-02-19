@@ -328,20 +328,22 @@ class Modula_Importer {
                     break;
                 case
                 'photoblocks':
-                    if (isset($import_settings['galleries']['photoblocks']) && in_array($gallery->id, $import_settings['galleries']['photoblocks'])) {
+                    if ( isset( $import_settings['galleries']['photoblocks'] ) && in_array( $gallery->id, $import_settings['galleries']['photoblocks'] ) ) {
                         $imported = true;
                     }
                     $id    = $gallery->id;
-                    $title = '<a href="' . admin_url('admin.php?page=photoblocks-edit&id=' . $gallery->id) . '" target="_blank"> ' . esc_html($gallery->name) . '</a>';
-                    $count = $gal_source->images_count($gallery->id);
+                    $title = '<a href="' . admin_url( 'admin.php?page=photoblocks-edit&id=' . $gallery->id ) . '" target="_blank"> ' . esc_html( $gallery->name ) . '</a>';
+                    $count = $gal_source->images_count( $gallery->id );
                     break;
                 case 'wp_core':
-                    $id    = $key;
-                    $title = '<a href="' . admin_url('/post.php?post=' . $id. '&action=edit') . '" target="_blank">' . esc_html($gallery[0]) . '</a>';
-                    $count = $gal_source->images_count($gallery->ID);
+                    $id = $gallery['page_id'];
+                    $value = json_encode( array( 'id' => $key, 'shortcode' => $gallery['shortcode'] ) );
+                    $title = '<a href="' . admin_url( '/post.php?post=' . $id . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery['title'] ) . '</a>';
+                    $count = $gallery['images'];
+
                     break;
                 default:
-                    if (isset($import_settings['galleries'][$source]) && in_array($gallery->id, $import_settings['galleries'][$source])) {
+                    if ( isset( $import_settings['galleries'][ $source ] ) && in_array( $gallery->id, $import_settings['galleries'][ $source ] ) ) {
                         $imported = true;
                     }
                     $id    = $gallery->ID;
@@ -349,22 +351,24 @@ class Modula_Importer {
 
             }
 
+            // Small fix for wp_core galleries
+            $val = ($value) ? $value : $id;
 
             $html .= '<div class="modula-importer-checkbox-wrapper">' .
-                     '<label for="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
-                     ' data-id="' . esc_attr($id) . '" ' . ($imported ? ' class="imported"' : '') . '>' .
+                     '<label for="' . esc_attr( $source ) . '-galleries-' . esc_attr( $id ) . '"' .
+                     ' data-id="' . esc_attr( $id ) . '" ' . ( $imported ? ' class="imported"' : '' ) . '>' .
                      '<input type="checkbox" name="gallery"' .
-                     ' id="' . esc_attr($source) . '-galleries-' . esc_attr($id) . '"' .
-                     ' value="' . esc_attr($id) . '"/>';
-            $html .= $title . ' ( ' . esc_html($count) . esc_html__(' image(s) )', 'modula-importer');
+                     ' id="' . esc_attr( $source ) . '-galleries-' . esc_attr( $id ) . '"' .
+                     ' data-id="'.esc_attr($id).'" value="' . esc_attr( $val ) . '"/>';
+            $html .= $title . ' ( ' . esc_html( $count ) . esc_html__( ' image(s) )', 'modula-importer' );
 
             // Display text on LITE. On PRO version
-            $lite = esc_html__(' -> Modula LITE (20 images max).', 'modula-importer');
-            $html .= apply_filters('modula_lite_migration_text', $lite);
+            $lite = esc_html__( ' -> Modula LITE (20 images max).', 'modula-importer' );
+            $html .= apply_filters( 'modula_lite_migration_text', $lite );
 
             $html .= '<span class="modula-importer-gallery-status">';
 
-            if ($imported) {
+            if ( $imported ) {
                 $html .= '<i class="imported-check dashicons dashicons-yes"></i>';
             }
 
