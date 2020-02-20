@@ -709,19 +709,18 @@
         });
 
         // Select all galleries from respective source
-        $('body').on('change','.select-all-checkbox', function () {
+        $('body').on('click', '.modula-all-selection', function (e) {
 
-            var checkboxes = $(this).parents('td').find('input[type="checkbox"]').not($(this));
-
-            if ($(this).prop('checked')) {
+            var checkboxes = $(this).parents('td').find('input[type="checkbox"]');
+            if ( '#select_all' == $(this).attr('href') ) {
                 checkboxes.each(function () {
-                    if ($(this).is(':visible')) {
+                    if ( $(this).is(':visible') ) {
                         checkboxes.prop('checked', true);
                     }
                 });
             } else {
                 checkboxes.each(function () {
-                    if ($(this).is(':visible')) {
+                    if ( $(this).is(':visible') ) {
                         checkboxes.prop('checked', false);
                     }
                 });

@@ -101,13 +101,10 @@ if ($sources) {
                         </th>
                         <td>
                             <div class="modula-importer-checkbox-wrapper">
-                                <label for="select-galleries-<?php echo esc_attr($source); ?>"
-                                       data-id="select-all-<?php echo esc_attr($source); ?>" class="select-all-checkbox-wrapper">
-                                    <input type="checkbox" name="select-all-<?php echo esc_attr($source); ?>"
-                                           id="select-all-<?php echo esc_attr($source); ?>"
-                                           value="" class="select-all-checkbox"/>
-                                    <?php printf(esc_html__('Select all %s galleries.', 'modula-importer'), $label); ?>
-                                </label>
+                                <a href="#select_all"
+                                   class="modula-all-selection"><?php esc_html_e( 'Select all', 'modula-importer' ); ?></a>
+                                / <a href="#deselect_all"
+                                     class="modula-all-selection"><?php esc_html_e( 'Deselect all', 'modula-importer' ); ?></a> <?php printf( esc_html__( '%s galleries.', 'modula-importer' ), $label ); ?>
                             </div>
                             <div class="modula-found-galleries"></div>
                         </td>
