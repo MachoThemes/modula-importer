@@ -336,11 +336,10 @@ class Modula_Importer {
                     $count = $gal_source->images_count( $gallery->id );
                     break;
                 case 'wp_core':
-                    $id = $gallery['page_id'];
-                    $value = json_encode( array( 'id' => $key, 'shortcode' => $gallery['shortcode'] ) );
-                    $title = '<a href="' . admin_url( '/post.php?post=' . $id . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery['title'] ) . '</a>';
+                    $id = $gallery['page_id'].'-'.$gallery['gal_nr'];
+                    $value = json_encode( array( 'id' => $gallery['page_id'], 'shortcode' => $gallery['shortcode'] ) );
+                    $title = '<a href="' . admin_url( '/post.php?post=' . absint($gallery['page_id']) . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery['title'] ) . '</a>';
                     $count = $gallery['images'];
-
                     break;
                 default:
                     if ( isset( $import_settings['galleries'][ $source ] ) && in_array( $gallery->id, $import_settings['galleries'][ $source ] ) ) {

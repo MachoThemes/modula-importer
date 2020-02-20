@@ -63,15 +63,20 @@ class Modula_WP_Core_Gallery_Importer {
                 if ( $result && $result > 0 ) {
                     foreach ( $matches[0] as $sc ) {
 
-                        $modula_images = array();
                         $pattern       = '/ids\s*=\s*\"([\s\S]*?)\"/';
                         $result        = preg_match( $pattern, $sc, $gallery_ids );
                         $images        = ( $gallery_ids[1] && NULL != $gallery_ids[1] ) ? explode( ',', $gallery_ids[1] ) : false;
+
+                        // if there are images we should build our array
                         if ( $images && count( $images ) != 0 ) {
+                            // need all of these because multiple galleries can be found on 1 post type
                             $core_gal[ $i ]['title']     = '#' . $i . ' from ' . $gallery->post_title;
+                            // need shortcode so that we can search only for that string when we replace/migrate
                             $core_gal[ $i ]['shortcode'] = $sc;
                             $core_gal[ $i ]['images']    = count( $images );
                             $core_gal[ $i ]['page_id']   = $gallery->ID;
+                            // need gallery number to prevent double id and double selecting
+                            $core_gal[ $i ]['gal_nr']   = $i;
                         }
                         $i++;
                     }
@@ -93,41 +98,11 @@ class Modula_WP_Core_Gallery_Importer {
 
 
     /**
-     * Get gallery image count
-     *
-     * @since 1.0.0
-     * @param $id
-     * @return int
-     */
-    public function images_count($id){
-
-        $post          = get_post($id);
-        $content       = $post->post_content;
-        $search_string = '[gallery';
-        $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
-        $result        = preg_match_all($pattern, $content, $matches);
-
-        if ($result && $result > 0) {
-            foreach ($matches[0] as $sc) {
-                $modula_images = array();
-                $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
-                $result            = preg_match($pattern, $sc, $gallery_ids);
-                $images = ($gallery_ids[1] && NULL != $gallery_ids[1]) ? explode(',',$gallery_ids[1]) :false;
-            }
-        }
-
-        $count = ($images) ? count($images) : false;
-
-        return $count;
-    }
-
-
-    /**
      * Replace WP Core gallery and create Modula gallery
      *
      * @since 1.0.0
      */
-    public function wp_core_gallery_import($page_id = array()) {
+    public function wp_core_gallery_import($galery_atts = array()) {
 
         global $wpdb,$modula_importer;
 
@@ -136,7 +111,7 @@ class Modula_WP_Core_Gallery_Importer {
         set_time_limit(0);
 
         // If no gallery ID, get from AJAX request
-        if (empty($page_id)) {
+        if (empty($galery_atts)) {
 
             // Run a security check first.
             check_ajax_referer('modula-importer', 'nonce');
@@ -149,18 +124,19 @@ class Modula_WP_Core_Gallery_Importer {
                 $this->modula_import_result(false, __('No gallery was selected', 'modula-importer'));
             }
 
-            $page_id = absint($_POST['id']);
-
+            // Need to make replace so we can search our shortcode in content
+            $galery_atts = str_replace('\"','"',$_POST['id']);
         }
 
-        // Get gallery
-        $post          = get_post($page_id);
+
+        // Get page with gallery
+        $post          = get_post($galery_atts['id']);
         $content       = $post->post_content;
-        $search_string = '[gallery';
-        $pattern       = '/\\' . $search_string . '[\s\S]*?\]/';
-        $result        = preg_match_all($pattern, $content, $matches);
+        $search_string = $galery_atts['shortcode'];
+        $result        = preg_match_all($search_string, $content, $matches);
 
         if ($result && $result > 0) {
+
             foreach ($matches[0] as $sc) {
                 $modula_images = array();
                 $pattern           = '/ids\s*=\s*\"([\s\S]*?)\"/';
@@ -210,7 +186,7 @@ class Modula_WP_Core_Gallery_Importer {
                 // Attach meta modula-images to Modula CPT
                 update_post_meta($modula_gallery_id, 'modula-images', $modula_images);
 
-                $wp_core_shortcode    = '[gallery ' . $gallery_image_ids . ']';
+                $wp_core_shortcode    = $galery_atts['shortcode'];
                 $modula_shortcode = '[modula id="' . $modula_gallery_id . '"]';
 
                 // Replace Gallery PhotoBlocks shortcode with Modula Shortcode in Posts, Pages and CPTs

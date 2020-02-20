@@ -611,6 +611,7 @@
 
                 $(status).removeClass().addClass('importing');
                 $('span', $(status)).html(modula_importer.importing);
+                var value = $('#modula_importer_wp_core input[data-id=' + gallery_id + ']').val();
 
                 var opts = {
                     url:      ajaxurl,
@@ -620,7 +621,7 @@
                     dataType: 'json',
                     data: {
                         action: 'modula_importer_wp_core_gallery_import',
-                        id: gallery_id,
+                        id: JSON.parse(value),
                         nonce: modula_importer.nonce,
                         clean:delete_entries
                     },
