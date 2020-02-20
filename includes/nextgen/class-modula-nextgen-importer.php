@@ -210,6 +210,26 @@ class Modula_Nextgen_Importer {
             $nextgen_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
+        //@todo : gutenberg block replacement functionality
+        /*$sql_gutenberg       = "SELECT * FROM " . $wpdb->prefix . "posts WHERE `post_content` LIKE '%wp:imagely/nextgen-gallery%'";
+        $galleries_gutenberg = $wpdb->get_results($sql_gutenberg);
+
+        if(count($galleries_gutenberg) > 0){
+            foreach($galleries_gutenberg as $gutenberg){
+                $content       = $gutenberg->post_content;
+                $search_string = '/ids\s*=\s*\"([\s\S]*?)\"/';
+                $pattern       = '/<!-- wp:imagely/nextgen-gallery -->\s*\[\s*ngg\s*ids\s*=\s*\"([\s\S]*?)\"/';
+                $result        = preg_match_all($pattern, $content, $matches);
+                var_dump($content,$result);die();
+                if ( $result && $result > 0 ) {
+                    var_dump($matches[0]);die();
+                    foreach ( $matches[0] as $sc ) {
+                    }
+                }
+            }
+
+        }*/
+
         if('delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
