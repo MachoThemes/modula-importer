@@ -92,7 +92,7 @@ if ($sources) {
         ?>
 
         <div id="modula-<?php echo esc_attr($source); ?>-importer" class="row modula-importer-row hide">
-            <div id="modula_importer_<?php echo esc_attr($source); ?>">
+            <div id="modula_importer_<?php echo esc_attr($source); ?>" class="modula-importer-wrapper" source="<?php echo esc_attr($source); ?>">
                 <table class="form-table">
                     <tbody>
                     <tr valign="top">

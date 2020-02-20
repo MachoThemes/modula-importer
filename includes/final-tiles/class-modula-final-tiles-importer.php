@@ -23,8 +23,8 @@ class Modula_Final_Tiles_Importer {
     public function __construct() {
 
         // Add AJAX
-        add_action('wp_ajax_modula_importer_final_tiles', array($this, 'final_tiles_gallery_import'));
-        add_action('wp_ajax_modula_importer_final_tiles_update_imported', array($this, 'update_imported'));
+        add_action('wp_ajax_modula_importer_final_tiles_gallery_import', array($this, 'final_tiles_gallery_import'));
+        add_action('wp_ajax_modula_importer_final_tiles_gallery_imported_update', array($this, 'update_imported'));
 
     }
 
