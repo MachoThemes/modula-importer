@@ -196,7 +196,7 @@ class Modula_Final_Tiles_Importer {
                     'halign'      => 'center',
                     'valign'      => 'middle',
                     'link'        => $image->link,
-                    'target'      => '',
+                    'target'      => (isset($image->target) && '_blank' == $image->target ) ? 1 : 0,
                     'width'       => 2,
                     'height'      => 2,
                     'filters'     => ''

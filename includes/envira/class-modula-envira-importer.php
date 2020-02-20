@@ -135,12 +135,13 @@ class Modula_Envira_Importer {
         if (isset($envira_gallery_data) && count($envira_gallery_data) > 0) {
             foreach ($envira_gallery_data as $imageID => $image) {
 
-                $envira_image_title = (!isset($image['title']) || '' != $image['title']) ? $image['title'] : '';
+                $envira_image_title = ( !isset( $image['title'] ) || '' != $image['title'] ) ? $image['title'] : '';
 
-                $envira_image_caption = (!isset($image['caption']) || '' != $image['caption']) ? $image['caption'] : wp_get_attachment_caption($imageID);
+                $envira_image_caption = ( !isset( $image['caption'] ) || '' != $image['caption'] ) ? $image['caption'] : wp_get_attachment_caption( $imageID );
 
-                $envira_image_alt = (!isset($image['alt']) || '' != $image['alt']) ? $image['alt'] : get_post_meta($imageID, '_wp_attachment_image_alt', TRUE);
-                $envira_image_url = (!isset($image['link']) || '' != $image['link']) ? $image['link'] : '';
+                $envira_image_alt = ( !isset( $image['alt'] ) || '' != $image['alt'] ) ? $image['alt'] : get_post_meta( $imageID, '_wp_attachment_image_alt', TRUE );
+                $envira_image_url = ( !isset( $image['link'] ) || '' != $image['link'] ) ? $image['link'] : '';
+                $target           = ( isset( $image['link_new_window'] ) && '1' == $image['link_new_window'] ) ? 1 : 0;
 
 
                 $modula_images[] = array(
@@ -151,7 +152,7 @@ class Modula_Envira_Importer {
                     'halign'      => 'center',
                     'valign'      => 'middle',
                     'link'        => $envira_image_url,
-                    'target'      => '',
+                    'target'      => $target,
                     'width'       => 2,
                     'height'      => 2,
                     'filters'     => ''
