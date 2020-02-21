@@ -300,52 +300,61 @@ class Modula_Importer {
 
         foreach ($galleries['valid_galleries'] as $key => $gallery) {
             $imported = false;
-            switch ($source) {
+            switch ( $source ) {
                 case 'envira':
-                    if (isset($import_settings['galleries']['envira']) && in_array($gallery->ID, $import_settings['galleries']['envira'])) {
+                    $id             = $gallery->ID;
+                    $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
+
+                    if ( isset( $import_settings['galleries']['envira'] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
-                    $id    = $gallery->ID;
-                    $title = '<a href="' . admin_url('/post.php?post=' . $gallery->ID . '&action=edit') . '" target="_blank">' . esc_html($gallery->post_title) . '</a>';
-                    $count = $gal_source->images_count($gallery->ID);
+
+                    $title = '<a href="' . admin_url( '/post.php?post=' . $gallery->ID . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery->post_title ) . '</a>';
+                    $count = $gal_source->images_count( $gallery->ID );
                     break;
                 case 'final_tiles' :
-                    if (isset($import_settings['galleries']['final_tiles']) && in_array($gallery->Id, $import_settings['galleries']['final_tiles'])) {
+                    $id             = $gallery->Id;
+                    $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
+                    if ( isset( $import_settings['galleries']['final_tiles'] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
-                    $id         = $gallery->Id;
-                    $ftg_config = json_decode($gallery->configuration);
-                    $title      = '<a href="' . admin_url('admin.php?page=ftg-lite-gallery-admin&id=' . $gallery->Id) . '" target="_blank"> ' . esc_html($ftg_config->name) . '</a>';
-                    $count      = $gal_source->images_count($gallery->Id);
+
+                    $ftg_config = json_decode( $gallery->configuration );
+                    $title      = '<a href="' . admin_url( 'admin.php?page=ftg-lite-gallery-admin&id=' . $gallery->Id ) . '" target="_blank"> ' . esc_html( $ftg_config->name ) . '</a>';
+                    $count      = $gal_source->images_count( $gallery->Id );
                     break;
                 case 'nextgen':
-                    if (isset($import_settings['galleries']['nextgen']) && in_array($gallery->gid, $import_settings['galleries']['nextgen'])) {
+                    $id             = $gallery->gid;
+                    $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
+                    if ( isset( $import_settings['galleries']['nextgen'] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
-                    $id    = $gallery->gid;
-                    $title = '<a href="' . wp_nonce_url(admin_url('admin.php?page=nggallery-manage-gallery&amp;mode=edit&amp;gid=' . $gallery->gid)) . '" target="_blank">' . esc_html($gallery->title) . '</a>';
-                    $count = $gal_source->images_count($gallery->gid);
+                    $title = '<a href="' . wp_nonce_url( admin_url( 'admin.php?page=nggallery-manage-gallery&amp;mode=edit&amp;gid=' . $gallery->gid ) ) . '" target="_blank">' . esc_html( $gallery->title ) . '</a>';
+                    $count = $gal_source->images_count( $gallery->gid );
                     break;
                 case
                 'photoblocks':
-                    if ( isset( $import_settings['galleries']['photoblocks'] ) && in_array( $gallery->id, $import_settings['galleries']['photoblocks'] ) ) {
+                    $id             = $gallery->id;
+                    $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
+                    if ( isset( $import_settings['galleries']['photoblocks'] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
-                    $id    = $gallery->id;
                     $title = '<a href="' . admin_url( 'admin.php?page=photoblocks-edit&id=' . $gallery->id ) . '" target="_blank"> ' . esc_html( $gallery->name ) . '</a>';
                     $count = $gal_source->images_count( $gallery->id );
                     break;
                 case 'wp_core':
-                    $id = $gallery['page_id'].'-'.$gallery['gal_nr'];
+                    $id    = $gallery['page_id'] . '-' . $gallery['gal_nr'];
                     $value = json_encode( array( 'id' => $gallery['page_id'], 'shortcode' => $gallery['shortcode'] ) );
-                    $title = '<a href="' . admin_url( '/post.php?post=' . absint($gallery['page_id']) . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery['title'] ) . '</a>';
+                    $title = '<a href="' . admin_url( '/post.php?post=' . absint( $gallery['page_id'] ) . '&action=edit' ) . '" target="_blank">' . esc_html( $gallery['title'] ) . '</a>';
                     $count = $gallery['images'];
                     break;
                 default:
-                    if ( isset( $import_settings['galleries'][ $source ] ) && in_array( $gallery->id, $import_settings['galleries'][ $source ] ) ) {
+                    $id             = $gallery->ID;
+                    $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
+
+                    if ( isset( $import_settings['galleries'][ $source ] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
-                    $id    = $gallery->ID;
                     $title = $gallery->post_title;
 
             }

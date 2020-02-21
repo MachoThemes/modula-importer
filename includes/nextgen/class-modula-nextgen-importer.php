@@ -103,35 +103,41 @@ class Modula_Nextgen_Importer {
         global $wpdb, $modula_importer;
 
         // Set max execution time so we don't timeout
-        ini_set('max_execution_time', 0);
-        set_time_limit(0);
+        ini_set( 'max_execution_time', 0 );
+        set_time_limit( 0 );
 
         // If no gallery ID, get from AJAX request
-        if (empty($gallery_id)) {
+        if ( empty( $gallery_id ) ) {
 
             // Run a security check first.
-            check_ajax_referer('modula-importer', 'nonce');
+            check_ajax_referer( 'modula-importer', 'nonce' );
 
-            if (!defined('ABSPATH')) {
-                define('ABSPATH', dirname(__FILE__) . '/');
+            if ( !defined( 'ABSPATH' ) ) {
+                define( 'ABSPATH', dirname( __FILE__ ) . '/' );
             }
 
-            if (!isset($_POST['id'])) {
-                $this->modula_import_result(false, __('No gallery was selected', 'modula-importer'));
+            if ( !isset( $_POST['id'] ) ) {
+                $this->modula_import_result( false, __( 'No gallery was selected', 'modula-importer' ), false );
             }
 
-            $gallery_id = absint($_POST['id']);
+            $gallery_id = absint( $_POST['id'] );
 
         }
 
-        $imported_galleries = get_option('modula_importer');
-        // If already migrated don't migrate
-        if(isset($imported_galleries['galleries']['nextgen']) && in_array($gallery_id,$imported_galleries['galleries']['nextgen'])){
-            // Trigger delete function if option is set to delete
-            if('delete' == $_POST['clean']){
-                $this->clean_entries($gallery_id);
+        $imported_galleries = get_option( 'modula_importer' );
+
+        if ( isset( $imported_galleries['galleries']['nextgen'][ $gallery_id ] ) ) {
+
+            $modula_gallery = get_post_type( $imported_galleries['galleries']['nextgen'][ $gallery_id ] );
+            // If already migrated don't migrate
+            if ( 'modula-gallery' == $modula_gallery ) {
+
+                // Trigger delete function if option is set to delete
+                if ( 'delete' == $_POST['clean'] ) {
+                    $this->clean_entries( $gallery_id );
+                }
+                $this->modula_import_result( false, __( 'Gallery already migrated!', 'modula-importer' ), false );
             }
-            $this->modula_import_result(false, __('Gallery already migrated!', 'modula-importer'));
         }
 
         // Get image path
@@ -165,7 +171,7 @@ class Modula_Nextgen_Importer {
             if('delete' == $_POST['clean']){
                 $this->clean_entries($gallery_id);
             }
-            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
+            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'),false);
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -233,7 +239,7 @@ class Modula_Nextgen_Importer {
         if('delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
-        $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'));
+        $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'),$modula_gallery_id);
     }
 
     /**
@@ -256,10 +262,12 @@ class Modula_Nextgen_Importer {
             $importer_settings['galleries']['nextgen'] = array();
         }
 
-        $galleries = array_merge($importer_settings['galleries']['nextgen'], $galleries);
+        if ( is_array( $galleries ) && count( $galleries ) > 0 ) {
+            foreach ( $galleries as $key => $value ) {
+                $importer_settings['galleries']['nextgen'][ (int)$key ] = (int)$value;
+            }
+        }
 
-        // Remember that this gallery has been imported
-        $importer_settings['galleries']['nextgen'] = $galleries;
         update_option('modula_importer', $importer_settings);
 
         // Set url if migration complete
@@ -383,14 +391,16 @@ class Modula_Nextgen_Importer {
      *
      * @param $success
      * @param $message
+     * @param $modula_gallery_id
      *
      * @since 1.0.0
      */
-    public function modula_import_result($success, $message) {
-        echo json_encode(array(
-            'success' => (bool)$success,
-            'message' => (string)$message,
-        ));
+    public function modula_import_result( $success, $message, $modula_gallery_id = false ) {
+        echo json_encode( array(
+            'success'           => (bool)$success,
+            'message'           => (string)$message,
+            'modula_gallery_id' => $modula_gallery_id
+        ) );
         die;
     }
 
