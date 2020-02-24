@@ -173,8 +173,8 @@ class Modula_Photoblocks_Importer {
                     'valign'      => 'middle',
                     'link'        => $image['link'],
                     'target'      => $image['target'],
-                    'width'       => 2,
-                    'height'      => 2,
+                    'width'       => 1,
+                    'height'      => 1,
                     'filters'     => ''
                 );
             }
@@ -189,7 +189,13 @@ class Modula_Photoblocks_Importer {
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
-        $modula_settings = Modula_CPT_Fields_Helper::get_defaults();
+        $default_modula_settings = Modula_CPT_Fields_Helper::get_defaults();
+
+        $modula_settings = array(
+            'type'    => 'custom-grid',
+        );
+
+        $modula_settings = wp_parse_args( $modula_settings, $default_modula_settings );
 
         // Create Modula CPT
         $modula_gallery_id = wp_insert_post(array(
