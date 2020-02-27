@@ -65,19 +65,27 @@ class Modula_Final_Tiles_Importer {
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->prefix."FinalTiles_gallery'")){
-            $galleries = $wpdb->get_results(" SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery");
-            if (count($galleries) != 0) {
-                foreach($galleries as $key=>$gallery){
-                    $count = $this->images_count($gallery->Id);
+        if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'" ) ) {
+            $galleries = $wpdb->get_results( " SELECT * FROM " . $wpdb->prefix . "FinalTiles_gallery" );
+            if ( count( $galleries ) != 0 ) {
+                foreach ( $galleries as $key => $gallery ) {
+                    $count = $this->images_count( $gallery->Id );
 
-                    if($count == 0){
-                        unset($galleries[$key]);
+                    if ( $count == 0 ) {
+                        unset( $galleries[ $key ] );
+                        $empty_galleries[ $key ] = $gallery;
                     }
                 }
 
-                if(count($galleries) != 0){
-                    return $galleries;
+                if ( count( $galleries ) != 0 ) {
+                    $return_galleries['valid_galleries'] = $galleries;
+                }
+                if ( count( $empty_galleries ) != 0 ) {
+                    $return_galleries['empty_galleries'] = $empty_galleries;
+                }
+
+                if ( count( $return_galleries ) != 0 ) {
+                    return $return_galleries;
                 }
             }
         }
@@ -334,12 +342,24 @@ class Modula_Final_Tiles_Importer {
      */
     public function clean_entries($gallery_id){
         global $wpdb;
-        $sql      = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."finaltiles_gallery WHERE Id = $gallery_id" );
-        $sql_meta = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."finaltiles_gallery_images WHERE gid = $gallery_id" );
-        $wpdb->query( $sql );
-        $wpdb->query( $sql_meta );
-    }
 
+        if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "finaltiles_gallery'" ) ) {
+            $sql      = $wpdb->prepare( "DELETE FROM  " . $wpdb->prefix . "finaltiles_gallery WHERE Id = $gallery_id" );
+            $sql_meta = $wpdb->prepare( "DELETE FROM  " . $wpdb->prefix . "finaltiles_gallery_images WHERE gid = $gallery_id" );
+
+
+            $wpdb->query( $sql );
+            $wpdb->query( $sql_meta );
+        }
+
+        if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "FinalTiles_gallery'" ) ) {
+            $sql_2      = $wpdb->prepare( "DELETE FROM  " . $wpdb->prefix . "FinalTiles_gallery WHERE Id = $gallery_id" );
+            $sql_meta_2 = $wpdb->prepare( "DELETE FROM  " . $wpdb->prefix . "FinalTiles_gallery_images WHERE gid = $gallery_id" );
+
+            $wpdb->query( $sql_2 );
+            $wpdb->query( $sql_meta_2 );
+        }
+    }
 }
 
 // Load the class.
