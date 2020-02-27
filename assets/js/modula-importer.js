@@ -196,6 +196,7 @@
 
         // Select all galleries from respective source
         $('body').on('click', '.modula-all-selection', function (e) {
+            e.preventDefault();
 
             var checkboxes = $(this).parents('td').find('input[type="checkbox"]');
             if ( '#select_all' == $(this).attr('href') ) {
