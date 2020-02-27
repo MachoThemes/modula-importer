@@ -97,14 +97,14 @@ if ($sources) {
                     <tbody>
                     <tr valign="top">
                         <th scope="row" valign="top">
-                            <?php echo esc_html($label) . esc_html__(' galleries', 'modula-importer'); ?>
+                            <?php echo esc_html('Galleries to import', 'modula-importer'); ?>
                         </th>
                         <td>
                             <div class="modula-importer-checkbox-wrapper">
                                 <a href="#select_all"
                                    class="modula-all-selection"><?php esc_html_e( 'Select all', 'modula-importer' ); ?></a>
                                 / <a href="#deselect_all"
-                                     class="modula-all-selection"><?php esc_html_e( 'Deselect all', 'modula-importer' ); ?></a> <?php printf( esc_html__( '%s galleries.', 'modula-importer' ), $label ); ?>
+                                     class="modula-all-selection"><?php esc_html_e( 'Deselect all', 'modula-importer' ); ?></a>
                             </div>
                             <div class="modula-found-galleries"></div>
                         </td>

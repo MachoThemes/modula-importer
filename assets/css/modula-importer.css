@@ -40,3 +40,7 @@
 .modula-importer-upsell-wrapper .modula-importer-upsell-buttons a {
     margin-right:15px;
 }
+
+.modula-importer-checkbox-wrapper .modula-tooltip span {
+    color:red !important;
+}

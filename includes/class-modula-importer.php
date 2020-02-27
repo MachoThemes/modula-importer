@@ -235,10 +235,10 @@ class Modula_Importer {
             $sources['nextgen'] = 'NextGEN Gallery';
         }
         if ($final_tiles && NULL != $final_tiles && !empty($final_tiles) && $final_tiles_return && '0' != $final_tiles_return['COUNT(Id)']) {
-            $sources['final_tiles'] = 'Image Photo Gallery Final Tiles Grid';
+            $sources['final_tiles'] = 'Final Tiles Gallery';
         }
         if ($photoblolcks && NULL != $photoblolcks && !empty($photoblolcks) && $photoblocks_return && '0' != $photoblocks_return['COUNT(id)']) {
-            $sources['photoblocks'] = 'Gallery PhotoBlocks';
+            $sources['photoblocks'] = 'PhotoBlocks';
         }
         if ($wp_core && NULL != $wp_core && !empty($wp_core) && $wp_core_return && '0' != $wp_core_return['COUNT(ID)'] ) {
             $sources['wp_core'] = 'WP Core Galleries';
@@ -368,11 +368,21 @@ class Modula_Importer {
                      '<input type="checkbox" name="gallery"' .
                      ' id="' . esc_attr( $source ) . '-galleries-' . esc_attr( $id ) . '"' .
                      ' data-id="'.esc_attr($id).'" value="' . esc_attr( $val ) . '"/>';
-            $html .= $title . ' ( ' . esc_html( $count ) . esc_html__( ' image(s) )', 'modula-importer' );
+            $html .= $title ;
+
+
+
+            if(20 < $count){
+                $lite = '<div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span><div class="tab-header-description modula-tooltip-content">';
+                $lite .= esc_html__('You currently have ','modula-importer');
+                $lite .= absint($count);
+                $lite .= esc_html__(' images in your gallery and only 20 will be imported. If you want to import al, please buy the PRO version and import them after that. ','modula-importer');
+                $lite .= '</div></div>';
+            }
 
             // Display text on LITE. On PRO version
-            $lite = esc_html__( ' -> Modula LITE (20 images max).', 'modula-importer' );
-            $html .= apply_filters( 'modula_lite_migration_text', $lite );
+            $lite = apply_filters( 'modula_lite_migration_text', $lite );
+            $html .= $lite;
 
             $html .= '<span class="modula-importer-gallery-status">';
 
