@@ -53,6 +53,8 @@ class Modula_Importer {
         // Include required scripts for import
         add_action('admin_enqueue_scripts', array($this, 'admin_importer_scripts'));
 
+        add_action('admin_menu',array($this,'migrator_menu'));
+
         // Required files
         require_once MODULA_IMPORTER_PATH . 'includes/nextgen/class-modula-nextgen-importer.php';
         require_once MODULA_IMPORTER_PATH . 'includes/envira/class-modula-envira-importer.php';
@@ -64,6 +66,14 @@ class Modula_Importer {
         $this->init();
 
     }
+
+    /**
+     * Add sub-menu entry for Migrate
+     */
+    public function migrator_menu() {
+        add_submenu_page( 'edit.php?post_type=modula-gallery', esc_html__( 'Migrate', 'modula-importer' ), esc_html__( 'Migrate', 'modula-importer' ), 'manage_options', 'edit.php?post_type=modula-gallery&page=modula&modula-tab=importer' );
+    }
+
 
     /**
      * Loads the plugin textdomain for translation.
