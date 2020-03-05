@@ -121,7 +121,7 @@ class Modula_WP_Core_Gallery_Importer {
             }
 
             if (!isset($_POST['id'])) {
-                $this->modula_import_result(false, __('No gallery was selected', 'modula-importer'));
+                $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'));
             }
 
             // Need to make replace so we can search our shortcode in content
@@ -150,13 +150,13 @@ class Modula_WP_Core_Gallery_Importer {
                     if ($img) {
                         // Build Modula Gallery modula-images metadata
                         $modula_images[] = array(
-                            'id'          => $image,
-                            'alt'         => get_post_meta( $image, '_wp_attachment_image_alt', true ),
-                            'title'       => $img->post_title,
-                            'description' => $img->post_content,
+                            'id'          => absint($image),
+                            'alt'         => sanitize_text_field(get_post_meta( $image, '_wp_attachment_image_alt', true )),
+                            'title'       => sanitize_text_field($img->post_title),
+                            'description' => wp_filter_post_kses($img->post_content),
                             'halign'      => 'center',
                             'valign'      => 'middle',
-                            'link'        => $img->guid,
+                            'link'        => esc_url_raw($img->guid),
                             'target'      => '',
                             'width'       => 2,
                             'height'      => 2,
@@ -166,7 +166,7 @@ class Modula_WP_Core_Gallery_Importer {
                 }
 
                 if (count($modula_images) == 0) {
-                    $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'));
+                    $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'));
                 }
 
                 // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -176,7 +176,7 @@ class Modula_WP_Core_Gallery_Importer {
                 $modula_gallery_id = wp_insert_post(array(
                     'post_type'   => 'modula-gallery',
                     'post_status' => 'publish',
-                    'post_title'  => esc_html($_POST['gallery_title']),
+                    'post_title'  => sanitize_text_field($_POST['gallery_title']),
                 ));
 
 

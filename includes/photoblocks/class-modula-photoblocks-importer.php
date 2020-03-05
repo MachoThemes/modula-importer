@@ -115,7 +115,7 @@ class Modula_Photoblocks_Importer {
             }
 
             if (!isset($_POST['id'])) {
-                $this->modula_import_result(false, __('No gallery was selected', 'modula-importer'),false);
+                $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'),false);
             }
 
             $gallery_id = absint($_POST['id']);
@@ -130,10 +130,10 @@ class Modula_Photoblocks_Importer {
 
             if ( 'modula-gallery' == $modula_gallery ) {
                 // Trigger delete function if option is set to delete
-                if ( 'delete' == $_POST['clean'] ) {
+                if ( isset($_POST['clean']) && 'delete' == $_POST['clean'] ) {
                     $this->clean_entries( $gallery_id );
                 }
-                $this->modula_import_result( false, __( 'Gallery already migrated!', 'modula-importer' ), false );
+                $this->modula_import_result( false, esc_html__( 'Gallery already migrated!', 'modula-best-grid-gallery' ), false );
             }
         }
 
@@ -168,16 +168,16 @@ class Modula_Photoblocks_Importer {
             foreach ($images as $image) {
                 $image_src = wp_get_attachment_image_src($image['id'],'full');
                 $modula_images[] = array(
-                    'id'          => $image['id'],
-                    'alt'         => $image['alt'],
-                    'title'       => $image['title'],
-                    'description' => $image['description'],
+                    'id'          => absint($image['id']),
+                    'alt'         => sanitize_text_field($image['alt']),
+                    'title'       => sanitize_text_field($image['title']),
+                    'description' => wp_filter_post_kses($image['description']),
                     'halign'      => 'center',
                     'valign'      => 'middle',
-                    'link'        => $image['link'],
-                    'target'      => $image['target'],
-                    'width'       => $image['width'],
-                    'height'      => $image['height'],
+                    'link'        => esc_url_raw($image['link']),
+                    'target'      => absint($image['target']),
+                    'width'       => absint($image['width']),
+                    'height'      => absint($image['height']),
                     'filters'     => ''
                 );
             }
@@ -185,10 +185,10 @@ class Modula_Photoblocks_Importer {
 
         if (count($modula_images) == 0) {
             // Trigger delete function if option is set to delete
-            if('delete' == $_POST['clean']){
+            if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
                 $this->clean_entries($gallery_id);
             }
-            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'),false);
+            $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'),false);
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -204,7 +204,7 @@ class Modula_Photoblocks_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => $gallery_data->name,
+            'post_title'  => sanitize_text_field($gallery_data->name),
         ));
 
 
@@ -222,7 +222,7 @@ class Modula_Photoblocks_Importer {
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
-        if('delete' == $_POST['clean']){
+        if($_POST['clean'] && 'delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
 
@@ -251,7 +251,7 @@ class Modula_Photoblocks_Importer {
 
         if ( is_array( $galleries ) && count( $galleries ) > 0 ) {
             foreach ( $galleries as $key => $value ) {
-                $importer_settings['galleries']['photoblocks'][ (int)$key ] = (int)$value;
+                $importer_settings['galleries']['photoblocks'][ absint($key) ] = absint($value);
             }
         }
         // Remember that this gallery has been imported
@@ -260,7 +260,7 @@ class Modula_Photoblocks_Importer {
         // Set url for migration complete
         $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
 
-        if('delete' == $_POST['clean']){
+        if($_POST['clean'] && 'delete' == $_POST['clean']){
             // Set url for migration and cleaning complete
             $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
         }
@@ -315,7 +315,6 @@ class Modula_Photoblocks_Importer {
         global $wpdb;
         $sql      = $wpdb->prepare( "DELETE FROM  ".$wpdb->prefix ."photoblocks WHERE id = $gallery_id" );
         $wpdb->query( $sql );
-        $wpdb->query( $sql_meta );
     }
 
 }

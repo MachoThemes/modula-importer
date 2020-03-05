@@ -117,7 +117,7 @@ class Modula_Nextgen_Importer {
             }
 
             if ( !isset( $_POST['id'] ) ) {
-                $this->modula_import_result( false, __( 'No gallery was selected', 'modula-importer' ), false );
+                $this->modula_import_result( false, esc_html__( 'No gallery was selected', 'modula-best-grid-gallery' ), false );
             }
 
             $gallery_id = absint( $_POST['id'] );
@@ -133,10 +133,10 @@ class Modula_Nextgen_Importer {
             if ( 'modula-gallery' == $modula_gallery ) {
 
                 // Trigger delete function if option is set to delete
-                if ( 'delete' == $_POST['clean'] ) {
+                if ( isset($_POST['clean']) && 'delete' == $_POST['clean'] ) {
                     $this->clean_entries( $gallery_id );
                 }
-                $this->modula_import_result( false, __( 'Gallery already migrated!', 'modula-importer' ), false );
+                $this->modula_import_result( false, esc_html__( 'Gallery already migrated!', 'modula-best-grid-gallery' ), false );
             }
         }
 
@@ -168,10 +168,10 @@ class Modula_Nextgen_Importer {
 
         if (count($attachments) == 0) {
             // Trigger delete function if option is set to delete
-            if('delete' == $_POST['clean']){
+            if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
                 $this->clean_entries($gallery_id);
             }
-            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'),false);
+            $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'),false);
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -181,13 +181,13 @@ class Modula_Nextgen_Importer {
         $modula_images = array();
         foreach ($attachments as $attachment) {
             $modula_images[] = array(
-                'id'          => $attachment['ID'],
-                'alt'         => $attachment['alt'],
-                'title'       => $attachment['title'],
-                'description' => $attachment['caption'],
+                'id'          => absint($attachment['ID']),
+                'alt'         => sanitize_text_field($attachment['alt']),
+                'title'       => sanitize_text_field($attachment['title']),
+                'description' => wp_filter_post_kses($attachment['caption']),
                 'halign'      => 'center',
                 'valign'      => 'middle',
-                'link'        => $attachment['src'],
+                'link'        => esc_url_raw($attachment['src']),
                 'target'      => '',
                 'width'       => 2,
                 'height'      => 2,
@@ -199,7 +199,7 @@ class Modula_Nextgen_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => $gallery->title,
+            'post_title'  => sanitize_text_field($gallery->title),
         ));
 
         // Attach meta modula-settings to Modula CPT
@@ -240,7 +240,7 @@ class Modula_Nextgen_Importer {
 
         }*/
 
-        if('delete' == $_POST['clean']){
+        if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
         $this->modula_import_result(true, wp_kses_post('<i class="imported-check dashicons dashicons-yes"></i>'),$modula_gallery_id);
@@ -268,7 +268,7 @@ class Modula_Nextgen_Importer {
 
         if ( is_array( $galleries ) && count( $galleries ) > 0 ) {
             foreach ( $galleries as $key => $value ) {
-                $importer_settings['galleries']['nextgen'][ (int)$key ] = (int)$value;
+                $importer_settings['galleries']['nextgen'][ absint($key) ] = absint($value);
             }
         }
 
@@ -277,7 +277,7 @@ class Modula_Nextgen_Importer {
         // Set url if migration complete
         $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
 
-        if('delete' == $_POST['clean']){
+        if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
             // Set url if migration and cleaning complete
             $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
         }
@@ -357,11 +357,11 @@ class Modula_Nextgen_Importer {
 
         // Construct the attachment array
         $attachment = array(
-            'post_mime_type' => $type,
-            'guid'           => $destination_url,
-            'post_title'     => $alt,
-            'post_name'      => $alt,
-            'post_content'   => $description,
+            'post_mime_type' => sanitize_text_field($type),
+            'guid'           => esc_url_raw($destination_url),
+            'post_title'     => sanitize_text_field($alt),
+            'post_name'      => sanitize_text_field($alt),
+            'post_content'   => wp_filter_post_kses($description),
         );
 
         // Save as attachment

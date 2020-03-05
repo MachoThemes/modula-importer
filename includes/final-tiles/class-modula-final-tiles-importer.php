@@ -150,7 +150,7 @@ class Modula_Final_Tiles_Importer {
             }
 
             if (!isset($_POST['id'])) {
-                $this->modula_import_result(false, __('No gallery was selected', 'modula-importer'),false);
+                $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'),false);
             }
 
             $gallery_id = absint($_POST['id']);
@@ -166,10 +166,10 @@ class Modula_Final_Tiles_Importer {
 
             if ( 'modula-gallery' == $modula_gallery ) {
                 // Trigger delete function if option is set to delete
-                if ( 'delete' == $_POST['clean'] ) {
+                if ( isset($_POST['clean']) && 'delete' == $_POST['clean'] ) {
                     $this->clean_entries( $gallery_id );
                 }
-                $this->modula_import_result( false, __( 'Gallery already migrated!', 'modula-importer' ), false );
+                $this->modula_import_result( false, esc_html__( 'Gallery already migrated!', 'modula-best-grid-gallery' ), false );
             }
         }
 
@@ -203,13 +203,13 @@ class Modula_Final_Tiles_Importer {
             foreach ($images as $image) {
 
                 $modula_images[] = array(
-                    'id'          => $image->imageId,
-                    'alt'         => $image->alt,
-                    'title'       => $image->title,
-                    'description' => $image->description,
+                    'id'          => absint($image->imageId),
+                    'alt'         => sanitize_text_field($image->alt),
+                    'title'       => sanitize_text_field($image->title),
+                    'description' => wp_filter_post_kses($image->description),
                     'halign'      => 'center',
                     'valign'      => 'middle',
-                    'link'        => $image->link,
+                    'link'        => esc_url_raw($image->link),
                     'target'      => (isset($image->target) && '_blank' == $image->target ) ? 1 : 0,
                     'width'       => 2,
                     'height'      => 2,
@@ -220,10 +220,10 @@ class Modula_Final_Tiles_Importer {
 
         if (count($modula_images) == 0) {
             // Trigger delete function if option is set to delete
-            if('delete' == $_POST['clean']){
+            if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
                 $this->clean_entries($gallery_id);
             }
-            $this->modula_import_result(false, __('No images found in gallery. Skipping gallery...', 'modula-importer'),$modula_gallery_id);
+            $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'),$modula_gallery_id);
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -234,7 +234,7 @@ class Modula_Final_Tiles_Importer {
         $modula_gallery_id = wp_insert_post(array(
             'post_type'   => 'modula-gallery',
             'post_status' => 'publish',
-            'post_title'  => $gallery_config->name,
+            'post_title'  => sanitize_text_field($gallery_config->name),
         ));
 
         // Attach meta modula-settings to Modula CPT
@@ -251,7 +251,7 @@ class Modula_Final_Tiles_Importer {
             $ftg_shortcode, $modula_shortcode);
         $wpdb->query($sql);
 
-        if('delete' == $_POST['clean']){
+        if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
 
@@ -280,7 +280,7 @@ class Modula_Final_Tiles_Importer {
 
         if ( is_array( $galleries ) && count( $galleries ) > 0 ) {
             foreach ( $galleries as $key => $value ) {
-                $importer_settings['galleries']['final_tiles'][ (int)$key ] = (int)$value;
+                $importer_settings['galleries']['final_tiles'][ absint($key) ] = absint($value);
             }
         }
 
@@ -289,7 +289,7 @@ class Modula_Final_Tiles_Importer {
         // Set url for migration complete
         $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete');
 
-        if('delete' == $_POST['clean']){
+        if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
             // Set url for migration and cleaning complete
             $url = admin_url('edit.php?post_type=modula-gallery&page=modula&modula-tab=importer&migration=complete&delete=complete');
         }

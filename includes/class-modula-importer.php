@@ -71,7 +71,7 @@ class Modula_Importer {
      * Add sub-menu entry for Migrate
      */
     public function migrator_menu() {
-        add_submenu_page( 'edit.php?post_type=modula-gallery', esc_html__( 'Migrate', 'modula-importer' ), esc_html__( 'Migrate', 'modula-importer' ), 'manage_options', 'edit.php?post_type=modula-gallery&page=modula&modula-tab=importer' );
+        add_submenu_page( 'edit.php?post_type=modula-gallery', esc_html__( 'Migrate', 'modula-best-grid-gallery' ), esc_html__( 'Migrate', 'modula-best-grid-gallery' ), 'manage_options', 'edit.php?post_type=modula-gallery&page=modula&modula-tab=importer' );
     }
 
 
@@ -138,7 +138,7 @@ class Modula_Importer {
 
             $ajax_url      = admin_url('admin-ajax.php');
             $nonce         = wp_create_nonce('modula-importer');
-            $empty_gallery = esc_html__('Please choose at least one gallery to migrate.', 'modula-importer');
+            $empty_gallery = esc_html__('Please choose at least one gallery to migrate.', 'modula-best-grid-gallery');
 
             wp_enqueue_style('modula-importer', MODULA_IMPORTER_URL . 'assets/css/modula-importer.css', array(), MODULA_IMPORTER_VERSION);
             wp_enqueue_script('modula-importer', MODULA_IMPORTER_URL . 'assets/js/modula-importer.js', array('jquery'), MODULA_IMPORTER_VERSION, true);
@@ -148,7 +148,7 @@ class Modula_Importer {
                 array(
                     'ajax'                    => $ajax_url,
                     'nonce'                   => $nonce,
-                    'importing'               => '<span style="color:green">' . esc_html__(' Migration started...', 'modula-importer') . '</span>',
+                    'importing'               => '<span style="color:green">' . esc_html__(' Migration started...', 'modula-best-grid-gallery') . '</span>',
                     'empty_gallery_selection' => $empty_gallery,
                 )
             );
@@ -166,7 +166,7 @@ class Modula_Importer {
      */
     public function add_importer_tab($tabs) {
         $tabs['importer'] = array(
-            'label'    => esc_html__('Migrate galleries', 'modula-importer'),
+            'label'    => esc_html__('Migrate galleries', 'modula-best-grid-gallery'),
             'priority' => 50,
         );
 
@@ -268,7 +268,7 @@ class Modula_Importer {
         $source = isset($_POST['source']) ? $_POST['source'] : false;
 
         if (!$source || 'none' == $source) {
-            echo esc_html__('There is no source selected', 'modula-importer');
+            echo esc_html__('There is no source selected', 'modula-best-grid-gallery');
             wp_die();
         }
 
@@ -304,7 +304,7 @@ class Modula_Importer {
         // Although this isn't necessary, sources have been checked before in tab
         // it is best if we do another check, just to be sure.
         if (!isset($galleries['valid_galleries']) && isset($galleries['empty_galleries']) && count($galleries['empty_galleries']) > 0) {
-            printf(esc_html__('While we’ve found %s gallery(ies) we could import , we were unable to find any images associated with it(them). There’s no content for us to import .','modula-importer'),count($galleries['empty_galleries']));
+            printf(esc_html__('While we’ve found %s gallery(ies) we could import , we were unable to find any images associated with it(them). There’s no content for us to import .','modula-best-grid-gallery'),count($galleries['empty_galleries']));
             wp_die();
         }
 
@@ -315,7 +315,7 @@ class Modula_Importer {
                     $id             = $gallery->ID;
                     $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
 
-                    if ( isset( $import_settings['galleries']['envira'] ) && 'modula-gallery' == $modula_gallery ) {
+                    if ( isset( $import_settings['galleries'][$source] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
 
@@ -325,7 +325,7 @@ class Modula_Importer {
                 case 'final_tiles' :
                     $id             = $gallery->Id;
                     $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
-                    if ( isset( $import_settings['galleries']['final_tiles'] ) && 'modula-gallery' == $modula_gallery ) {
+                    if ( isset( $import_settings['galleries'][$source] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
 
@@ -336,7 +336,7 @@ class Modula_Importer {
                 case 'nextgen':
                     $id             = $gallery->gid;
                     $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
-                    if ( isset( $import_settings['galleries']['nextgen'] ) && 'modula-gallery' == $modula_gallery ) {
+                    if ( isset( $import_settings['galleries'][$source] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
                     $title = '<a href="' . wp_nonce_url( admin_url( 'admin.php?page=nggallery-manage-gallery&amp;mode=edit&amp;gid=' . $gallery->gid ) ) . '" target="_blank">' . esc_html( $gallery->title ) . '</a>';
@@ -346,7 +346,7 @@ class Modula_Importer {
                 'photoblocks':
                     $id             = $gallery->id;
                     $modula_gallery = get_post_type( $import_settings['galleries'][ $source ][ $id ] );
-                    if ( isset( $import_settings['galleries']['photoblocks'] ) && 'modula-gallery' == $modula_gallery ) {
+                    if ( isset( $import_settings['galleries'][$source] ) && 'modula-gallery' == $modula_gallery ) {
                         $imported = true;
                     }
                     $title = '<a href="' . admin_url( 'admin.php?page=photoblocks-edit&id=' . $gallery->id ) . '" target="_blank"> ' . esc_html( $gallery->name ) . '</a>';
@@ -378,15 +378,16 @@ class Modula_Importer {
                      '<input type="checkbox" name="gallery"' .
                      ' id="' . esc_attr( $source ) . '-galleries-' . esc_attr( $id ) . '"' .
                      ' data-id="'.esc_attr($id).'" value="' . esc_attr( $val ) . '"/>';
+           // Title is escaped above
             $html .= $title ;
 
 
 
             if(20 < $count){
                 $lite = '<div class="tab-header-tooltip-container modula-tooltip"><span>[?]</span><div class="tab-header-description modula-tooltip-content">';
-                $lite .= esc_html__('You currently have ','modula-importer');
+                $lite .= esc_html__('You currently have ','modula-best-grid-gallery');
                 $lite .= absint($count);
-                $lite .= esc_html__(' images in your gallery and only 20 will be imported. If you want to import al, please buy the PRO version and import them after that. ','modula-importer');
+                $lite .= esc_html__(' images in your gallery and only 20 will be imported. If you want to import al, please buy the PRO version and import them after that. ','modula-best-grid-gallery');
                 $lite .= '</div></div>';
             }
 
