@@ -176,7 +176,7 @@ class Modula_WP_Core_Gallery_Importer {
                 $modula_gallery_id = wp_insert_post(array(
                     'post_type'   => 'modula-gallery',
                     'post_status' => 'publish',
-                    'post_title'  => 'Gallery from ' . $post->post_title,
+                    'post_title'  => esc_html($_POST['gallery_title']),
                 ));
 
 

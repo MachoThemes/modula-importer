@@ -64,8 +64,13 @@
 
                 var status = $('#modula_importer_' + modulaImporter.source + ' label[data-id=' + gallery_id + ']');
                 var id     = gallery_id;
+                var $gallery_title = false;
                 $(status).removeClass().addClass('importing');
                 $('span', $(status)).html(modula_importer.importing);
+                // For WP core galleries in case we have multiple galleries in same page
+                if('wp_core' == modulaImporter.source){
+                    $gallery_title = $('input#wp_core-galleries-'+id).next('a').text();
+                }
 
                 if ( 'wp_core' == modulaImporter.source ) {
                     id = JSON.parse($('#modula_importer_wp_core input[data-id=' + gallery_id + ']').val());
@@ -81,7 +86,8 @@
                         action: 'modula_importer_' + modulaImporter.source + '_gallery_import',
                         id: id,
                         nonce: modula_importer.nonce,
-                        clean: delete_entries
+                        clean: delete_entries,
+                        gallery_title : $gallery_title
                     },
                     success: function (response) {
 
