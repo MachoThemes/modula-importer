@@ -153,7 +153,10 @@ class Modula_Photoblocks_Importer {
                     'title'       => ( NULL != $block->caption->title->text ) ? $block->caption->title->text : '',
                     'alt'         => ( NULL != $block->image->alt ) ? $block->image->alt : '',
                     'link'        => ( NULL != $block->click->link ) ? $block->click->link : '',
-                    'target'      => ( NULL != $block->click->target && '_blank' == $block->click->target ) ? 1 : 0
+                    'target'      => ( NULL != $block->click->target && '_blank' == $block->click->target ) ? 1 : 0,
+                    'width'       => ( NULL != $block->geometry->colspan ) ? 3 * absint( $block->geometry->colspan ) : 1,
+                    'height'      => ( NULL != $block->geometry->rowspan ) ? 3 * absint( $block->geometry->rowspan ) : 1
+
                 );
             }
         }
@@ -173,8 +176,8 @@ class Modula_Photoblocks_Importer {
                     'valign'      => 'middle',
                     'link'        => $image['link'],
                     'target'      => $image['target'],
-                    'width'       => 1,
-                    'height'      => 1,
+                    'width'       => $image['width'],
+                    'height'      => $image['height'],
                     'filters'     => ''
                 );
             }
