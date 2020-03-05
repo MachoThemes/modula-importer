@@ -11,14 +11,14 @@ class Modula_Final_Tiles_Importer {
      *
      * @var object
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public static $instance;
 
     /**
      * Primary class constructor.
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function __construct() {
 
@@ -33,7 +33,7 @@ class Modula_Final_Tiles_Importer {
      *
      * @return mixed
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function get_galleries() {
 
@@ -97,9 +97,10 @@ class Modula_Final_Tiles_Importer {
     /**
      * Get gallery image count
      *
-     * @since 1.0.0
      * @param $id
      * @return int
+     *
+     * @since 2.2.7
      */
     public function images_count($id){
         global $wpdb;
@@ -127,9 +128,11 @@ class Modula_Final_Tiles_Importer {
 
 
     /**
-     * Imports a gallery from Final Tiles into Modula
+     * Imports a gallery from Final Tiles to Modula
      *
-     * @since 1.0.0
+     * @param string $gallery_id
+     *
+     * @since 2.2.7
      */
     public function final_tiles_gallery_import($gallery_id = '') {
 
@@ -144,10 +147,6 @@ class Modula_Final_Tiles_Importer {
 
             // Run a security check first.
             check_ajax_referer('modula-importer', 'nonce');
-
-            if (!defined('ABSPATH')) {
-                define('ABSPATH', dirname(__FILE__) . '/');
-            }
 
             if (!isset($_POST['id'])) {
                 $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'),false);
@@ -223,7 +222,7 @@ class Modula_Final_Tiles_Importer {
             if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
                 $this->clean_entries($gallery_id);
             }
-            $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'),$modula_gallery_id);
+            $this->modula_import_result(false, esc_html__('No images found in gallery. Skipping gallery...', 'modula-best-grid-gallery'),false);
         }
 
         // Get Modula Gallery defaults, used to set modula-settings metadata
@@ -261,8 +260,8 @@ class Modula_Final_Tiles_Importer {
     /**
      * Update imported galleries
      *
-     * @since 1.0.0
-     * @param array $galleries
+     *
+     * @since 2.2.7
      */
     public function update_imported() {
 
@@ -307,7 +306,7 @@ class Modula_Final_Tiles_Importer {
      * @param $success
      * @param $message
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function modula_import_result($success, $message,$modula_gallery_id = false) {
         echo json_encode(array(
@@ -322,7 +321,7 @@ class Modula_Final_Tiles_Importer {
     /**
      * Returns the singleton instance of the class.
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public static function get_instance() {
 
@@ -337,8 +336,9 @@ class Modula_Final_Tiles_Importer {
     /**
      * Delete old entries from database
      *
-     * @since 1.0.0
      * @param $gallery_id
+     *
+     * @since 2.2.7
      */
     public function clean_entries($gallery_id){
         global $wpdb;

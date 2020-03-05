@@ -116,10 +116,6 @@ class Modula_WP_Core_Gallery_Importer {
             // Run a security check first.
             check_ajax_referer('modula-importer', 'nonce');
 
-            if (!defined('ABSPATH')) {
-                define('ABSPATH', dirname(__FILE__) . '/');
-            }
-
             if (!isset($_POST['id'])) {
                 $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'));
             }

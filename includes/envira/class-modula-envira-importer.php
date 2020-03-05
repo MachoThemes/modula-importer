@@ -11,7 +11,7 @@ class Modula_Envira_Importer {
      *
      * @var object
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public static $instance;
 
@@ -34,7 +34,7 @@ class Modula_Envira_Importer {
      *
      * @return mixed
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function get_galleries() {
 
@@ -72,9 +72,10 @@ class Modula_Envira_Importer {
     /**
      * Get gallery image count
      *
-     * @since 1.0.0
      * @param $id
      * @return int
+     *
+     * @since 2.2.7
      */
     public function images_count($id){
 
@@ -85,9 +86,11 @@ class Modula_Envira_Importer {
     }
 
     /**
-     * Imports a gallery from Envira into Modula
+     * Imports a gallery from Envira to Modula
      *
-     * @since 1.0.0
+     * @param string $gallery_id
+     *
+     * @since 2.2.7
      */
     public function envira_gallery_import($gallery_id = '') {
 
@@ -102,10 +105,6 @@ class Modula_Envira_Importer {
 
             // Run a security check first.
             check_ajax_referer('modula-importer', 'nonce');
-
-            if (!defined('ABSPATH')) {
-                define('ABSPATH', dirname(__FILE__) . '/');
-            }
 
             if (!isset($_POST['id'])) {
                 $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'),false);
@@ -206,7 +205,7 @@ class Modula_Envira_Importer {
         $wpdb->query($sql);
 
         // Trigger delete function if option is set to delete
-        if('delete' == $_POST['clean']){
+        if(isset($_POST['clean']) && 'delete' == $_POST['clean']){
             $this->clean_entries($gallery_id);
         }
 
@@ -216,8 +215,8 @@ class Modula_Envira_Importer {
     /**
      * Update imported galleries
      *
-     * @since 1.0.0
-     * @param array $galleries
+     *
+     * @since 2.2.7
      */
     public function update_imported() {
 
@@ -264,7 +263,7 @@ class Modula_Envira_Importer {
      * @param $message
      * @param $gallery_id
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function modula_import_result( $success, $message, $gallery_id = false ) {
         echo json_encode( array(
@@ -279,7 +278,7 @@ class Modula_Envira_Importer {
     /**
      * Returns the singleton instance of the class.
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public static function get_instance() {
 
@@ -294,8 +293,9 @@ class Modula_Envira_Importer {
     /**
      * Delete old entries from database
      *
-     * @since 1.0.0
      * @param $gallery_id
+     *
+     * @since 2.2.7
      */
     public function clean_entries($gallery_id){
         global $wpdb;

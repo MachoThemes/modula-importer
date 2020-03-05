@@ -11,14 +11,14 @@ class Modula_Photoblocks_Importer {
      *
      * @var object
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public static $instance;
 
     /**
      * Primary class constructor.
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function __construct() {
 
@@ -33,7 +33,7 @@ class Modula_Photoblocks_Importer {
      *
      * @return mixed
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function get_galleries() {
 
@@ -73,9 +73,10 @@ class Modula_Photoblocks_Importer {
     /**
      * Get gallery image count
      *
-     * @since 1.0.0
      * @param $id
      * @return int
+     *
+     * @since 2.2.7
      */
     public function images_count($id){
         global $wpdb;
@@ -92,9 +93,9 @@ class Modula_Photoblocks_Importer {
 
 
     /**
-     * Imports a gallery from PhotoBlocks into Modula
+     * Imports a gallery from PhotoBlocks to Modula
      *
-     * @since 1.0.0
+     * @since 2.2.7
      */
     public function photoblocks_gallery_import($gallery_id = '') {
 
@@ -109,10 +110,6 @@ class Modula_Photoblocks_Importer {
 
             // Run a security check first.
             check_ajax_referer('modula-importer', 'nonce');
-
-            if (!defined('ABSPATH')) {
-                define('ABSPATH', dirname(__FILE__) . '/');
-            }
 
             if (!isset($_POST['id'])) {
                 $this->modula_import_result(false, esc_html__('No gallery was selected', 'modula-best-grid-gallery'),false);
